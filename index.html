@@ -125,7 +125,7 @@ main{flex:1;overflow-y:auto;padding:10px;}
 // ============================================================
 // 設定
 // ============================================================
-const TOTAL_WEEKS = 4;
+const TOTAL_WEEKS = 3;
 const STAPLES = ["キムチ","納豆","豆腐","漬物","ゆで卵","チーズ","ちりめんじゃこ"];
 
 // ============================================================
@@ -145,33 +145,23 @@ const menuData = {
       { day:"火", main:"豚の生姜焼き" },
       { day:"水", main:"肉じゃが" },
       { day:"木", main:"餃子（冷凍）" },
-      { day:"金", main:"豚バラ大根" },
+      { day:"金", main:"ハンバーグ" },
     ],
     weekend: WEEKEND
   },
   2: {
     days: [
-      { day:"月", main:"ハンバーグ" },
-      { day:"火", main:"鶏肉のトマト煮" },
-      { day:"水", main:"豚の角煮（市販）" },
-      { day:"木", main:"豚キムチ炒め" },
-      { day:"金", main:"チキンソテー" },
+      { day:"月", main:"鶏肉のトマト煮" },
+      { day:"火", main:"豚キムチ炒め" },
+      { day:"水", main:"チキンソテー" },
+      { day:"木", main:"回鍋肉" },
+      { day:"金", main:"麻婆豆腐" },
     ],
     weekend: WEEKEND
   },
   3: {
     days: [
-      { day:"月", main:"回鍋肉" },
-      { day:"火", main:"春巻き（出来合い）" },
-      { day:"水", main:"麻婆豆腐" },
-      { day:"木", main:"鶏の照り焼き" },
-      { day:"金", main:"豚こまとキャベツの炒め物" },
-    ],
-    weekend: WEEKEND
-  },
-  4: {
-    days: [
-      { day:"月", main:"ロールキャベツ（出来合い）" },
+      { day:"月", main:"鶏の照り焼き" },
     ],
     weekend: WEEKEND
   }
@@ -180,57 +170,58 @@ const menuData = {
 // ============================================================
 // 買い物データ
 // ============================================================
-// 今週のメイン食材（週ごとの肉など）
-const shoppingMeat = {
+// 平日メイン用の「肉」（週ごと）
+const weekMeat = {
   1:[
     {name:"鶏もも肉",qty:"600g",note:"から揚げ"},
     {name:"豚ロース薄切り",qty:"400g",note:"豚の生姜焼き"},
     {name:"豚こま切れ",qty:"300g",note:"肉じゃが"},
-    {name:"じゃがいも",qty:"4個",note:"肉じゃが"},
-    {name:"冷凍餃子",qty:"1〜2パック",note:"餃子"},
-    {name:"豚バラ薄切り",qty:"300g",note:"豚バラ大根"},
+    {name:"合いびき肉",qty:"400g",note:"ハンバーグ"},
   ],
   2:[
-    {name:"合いびき肉",qty:"400g",note:"ハンバーグ"},
     {name:"鶏もも肉",qty:"500g",note:"鶏肉のトマト煮"},
-    {name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"},
-    {name:"市販豚の角煮",qty:"1パック",note:"豚の角煮"},
-    {name:"豚バラ薄切り",qty:"300g",note:"豚キムチ炒め"},
+    {name:"豚バラ薄切り",qty:"600g",note:"豚キムチ・回鍋肉"},
     {name:"鶏もも肉",qty:"2枚",note:"チキンソテー"},
+    {name:"豚ひき肉",qty:"200g",note:"麻婆豆腐"},
   ],
   3:[
-    {name:"豚バラ薄切り",qty:"300g",note:"回鍋肉"},
-    {name:"市販春巻き",qty:"1〜2袋",note:"春巻き"},
-    {name:"豚ひき肉",qty:"200g",note:"麻婆豆腐"},
     {name:"鶏もも肉",qty:"2枚",note:"鶏の照り焼き"},
-    {name:"豚こま切れ",qty:"300g",note:"豚こまとキャベツの炒め物"},
-  ],
-  4:[
-    {name:"市販ロールキャベツ",qty:"1袋",note:"ロールキャベツ"},
   ]
 };
 
-// 週末メニュー用（毎週同じ）
-const WEEKEND_SHOPPING = [
-  {name:"パスタ麺",qty:"適量",note:"土昼・パスタ"},
-  {name:"豚バラ薄切り",qty:"150g",note:"お好み焼き"},
-  {name:"山芋",qty:"100g",note:"お好み焼き"},
-  {name:"牛こま切れ",qty:"250g",note:"ペッパーライス"},
-  {name:"コーン缶",qty:"1缶",note:"ペッパーライス"},
-  {name:"カレールウ",qty:"1箱",note:"カレー"},
-  {name:"カレー用肉",qty:"300g",note:"カレー"},
-];
+// 平日メイン用の「肉以外」（週ごと）
+const weekExtra = {
+  1:{ yasai:[{name:"じゃがいも",qty:"4個",note:"肉じゃが"}], sonota:[{name:"冷凍餃子",qty:"1〜2パック",note:"餃子"}] },
+  2:{ yasai:[], sonota:[{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}] },
+  3:{ yasai:[], sonota:[] }
+};
 
-// 毎週の定番（野菜・常備）
-const EXTRA_SHOPPING = [
-  "きのこ","ブロッコリー","カリフラワー",
-  "ほうれん草","レタス（葉物全般）","サツマイモ",
-  "キムチ","ネギ類","タマネギ","レモン","ナス・ピーマン・パプリカ","カボチャ",
-  "トマト","アボカド","キャベツ","ラディッシュ",
-  "かぶ","大根","しょうが","ニンニク","ベリー類","チーズ",
-  "食パン","卵","牛乳","納豆","豆腐",
-  "魚","バナナ","生クリーム","あずき"
-];
+// 週末メニュー用（毎週同じ）
+const weekendShop = {
+  niku:[
+    {name:"豚バラ薄切り",qty:"150g",note:"お好み焼き"},
+    {name:"牛こま切れ",qty:"250g",note:"ペッパーライス"},
+    {name:"カレー用肉",qty:"300g",note:"カレー"},
+  ],
+  yasai:[ {name:"山芋",qty:"100g",note:"お好み焼き"} ],
+  sonota:[
+    {name:"パスタ麺",qty:"適量",note:"パスタ"},
+    {name:"コーン缶",qty:"1缶",note:"ペッパーライス"},
+    {name:"カレールウ",qty:"1箱",note:"カレー"},
+  ]
+};
+
+// 毎週の定番
+const teiban = {
+  yasai:[
+    "きのこ","ブロッコリー","ほうれん草","レタス（葉物全般）","サツマイモ",
+    "ネギ類","タマネギ","レモン","ナス・ピーマン・パプリカ","カボチャ",
+    "トマト","アボカド","キャベツ","ラディッシュ","かぶ","大根",
+    "しょうが","ニンニク","ベリー類","バナナ"
+  ],
+  nichihai:[ "キムチ","チーズ","食パン","卵","牛乳","納豆","豆腐","生クリーム" ],
+  sonota:[ "魚","あずき" ]
+};
 
 // ============================================================
 // レシピデータ
@@ -307,27 +298,8 @@ const recipes = {
       "水がなくなったらふたを取り強火でパリッとさせる",
     ]
   },
-  "豚バラ大根":{
-    category:"メイン", weeks:"1週（金）",
-    ingredients:[
-      {name:"豚バラ薄切り",qty:"300g"},
-      {name:"大根",qty:"1/2本"},
-      {name:"しょうゆ",qty:"大さじ3"},
-      {name:"みりん",qty:"大さじ3"},
-      {name:"酒",qty:"大さじ2"},
-      {name:"砂糖",qty:"大さじ1"},
-      {name:"おろし生姜",qty:"小さじ1"},
-      {name:"水",qty:"200ml"},
-    ],
-    steps:[
-      "大根を2cm厚の輪切りにして下茹で（10分）",
-      "豚バラを炒めて余分な脂を拭く",
-      "大根・調味料・水を加える",
-      "落とし蓋をして弱中火で20分煮る",
-    ]
-  },
   "ハンバーグ":{
-    category:"メイン", weeks:"2週（月）",
+    category:"メイン", weeks:"1週（金）",
     ingredients:[
       {name:"合いびき肉",qty:"400g"},
       {name:"玉ねぎ",qty:"1個"},
@@ -348,7 +320,7 @@ const recipes = {
     ]
   },
   "鶏肉のトマト煮":{
-    category:"メイン", weeks:"2週（火）",
+    category:"メイン", weeks:"2週（月）",
     ingredients:[
       {name:"鶏もも肉",qty:"500g"},
       {name:"トマト缶",qty:"1缶"},
@@ -365,18 +337,8 @@ const recipes = {
       "トマト缶・コンソメを加えて20分煮込む",
     ]
   },
-  "豚の角煮（市販）":{
-    category:"メイン", weeks:"2週（水）", note:"市販品を温めるだけ",
-    ingredients:[
-      {name:"市販豚の角煮",qty:"1パック"},
-    ],
-    steps:[
-      "パッケージのまま湯煎または電子レンジで温める",
-      "器に盛り付けて完成",
-    ]
-  },
   "豚キムチ炒め":{
-    category:"メイン", weeks:"2週（木）",
+    category:"メイン", weeks:"2週（火）",
     ingredients:[
       {name:"豚バラ薄切り",qty:"300g"},
       {name:"キムチ",qty:"200g"},
@@ -394,7 +356,7 @@ const recipes = {
     ]
   },
   "チキンソテー":{
-    category:"メイン", weeks:"2週（金）",
+    category:"メイン", weeks:"2週（水）",
     ingredients:[
       {name:"鶏もも肉",qty:"2枚"},
       {name:"にんにく",qty:"1片"},
@@ -411,7 +373,7 @@ const recipes = {
     ]
   },
   "回鍋肉":{
-    category:"メイン", weeks:"3週（月）",
+    category:"メイン", weeks:"2週（木）",
     ingredients:[
       {name:"豚バラ薄切り",qty:"300g"},
       {name:"キャベツ",qty:"1/2玉"},
@@ -430,19 +392,8 @@ const recipes = {
       "テンメンジャン・しょうゆで味付けして炒め合わせる",
     ]
   },
-  "春巻き（出来合い）":{
-    category:"メイン", weeks:"3週（火）", note:"市販品を揚げるまたは焼く",
-    ingredients:[
-      {name:"市販春巻き",qty:"1〜2袋"},
-      {name:"揚げ油",qty:"適量"},
-    ],
-    steps:[
-      "揚げる場合：170℃の油で4〜5分揚げる",
-      "オーブン焼きの場合：200℃で10〜12分",
-    ]
-  },
   "麻婆豆腐":{
-    category:"メイン", weeks:"3週（水）",
+    category:"メイン", weeks:"2週（金）",
     ingredients:[
       {name:"豆腐",qty:"2丁"},
       {name:"豚ひき肉",qty:"200g"},
@@ -466,7 +417,7 @@ const recipes = {
     ]
   },
   "鶏の照り焼き":{
-    category:"メイン", weeks:"3週（木）",
+    category:"メイン", weeks:"3週（月）",
     ingredients:[
       {name:"鶏もも肉",qty:"2枚"},
       {name:"しょうゆ",qty:"大さじ3"},
@@ -480,32 +431,6 @@ const recipes = {
       "裏返して3〜4分焼く",
       "余分な油を拭き取り調味料を加えて絡める",
       "照りが出るまで強めの中火で炒め絡める",
-    ]
-  },
-  "豚こまとキャベツの炒め物":{
-    category:"メイン", weeks:"3週（金）",
-    ingredients:[
-      {name:"豚こま切れ",qty:"300g"},
-      {name:"キャベツ",qty:"1/4玉"},
-      {name:"塩こしょう",qty:"少々"},
-      {name:"しょうゆ",qty:"大さじ1"},
-      {name:"ごま油",qty:"小さじ1"},
-    ],
-    steps:[
-      "キャベツをざく切りにする",
-      "フライパンで豚こまを炒めて塩こしょうする",
-      "キャベツを加えてざっと炒める",
-      "しょうゆ・ごま油で味付けして完成",
-    ]
-  },
-  "ロールキャベツ（出来合い）":{
-    category:"メイン", weeks:"4週（月）", note:"市販品を温めるだけ",
-    ingredients:[
-      {name:"市販ロールキャベツ",qty:"1袋"},
-    ],
-    steps:[
-      "パッケージのまま鍋で温める",
-      "または電子レンジで加熱する",
     ]
   },
 
@@ -676,9 +601,16 @@ function renderShopping(){
 
   let html = `<button class="shop-reset" onclick="resetChecks()">✓ チェックをリセット</button>`;
 
-  html += shopSection('🥩 今週のメイン食材', shoppingMeat[currentWeek], 'main');
-  html += shopSection('🍝 週末メニュー用（毎週）', WEEKEND_SHOPPING, 'week');
-  html += shopSection('🛒 毎週の定番（野菜・常備）', EXTRA_SHOPPING, 'extra');
+  const wx = weekExtra[currentWeek] || { yasai:[], sonota:[] };
+  const niku    = [ ...(weekMeat[currentWeek]||[]), ...weekendShop.niku ];
+  const yasai   = [ ...wx.yasai, ...weekendShop.yasai, ...teiban.yasai ];
+  const nichihai= [ ...teiban.nichihai ];
+  const sonota  = [ ...wx.sonota, ...weekendShop.sonota, ...teiban.sonota ];
+
+  html += shopSection('🥩 肉', niku, 'niku');
+  html += shopSection('🥦 野菜・果物', yasai, 'yasai');
+  html += shopSection('🥛 日配', nichihai, 'nichihai');
+  html += shopSection('🛒 その他', sonota, 'sonota');
 
   main.innerHTML = html;
 }
