@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>献立アプリ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#fdf6ee;color:#333;font-size:15px;}
+#app{display:flex;flex-direction:column;height:100vh;max-width:600px;margin:0 auto;background:#fff;}
+
+/* Header */
+header{background:#e8703a;color:#fff;padding:10px 12px 6px;}
+header h1{font-size:17px;font-weight:bold;margin-bottom:8px;}
+.week-row{display:flex;gap:5px;flex-wrap:wrap;}
+.week-btn{background:rgba(255,255,255,0.25);color:#fff;border:1px solid rgba(255,255,255,0.5);border-radius:16px;padding:4px 10px;font-size:13px;cursor:pointer;white-space:nowrap;}
+.week-btn.active{background:#fff;color:#e8703a;font-weight:bold;}
+
+/* Tab bar */
+.tab-bar{display:flex;border-top:1px solid #ddd;background:#fff;flex-shrink:0;}
+.tab-btn{flex:1;padding:10px 0;border:none;background:none;font-size:13px;color:#999;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.tab-btn.active{color:#e8703a;border-top:2px solid #e8703a;}
+.tab-icon{font-size:20px;}
+
+/* Content */
+main{flex:1;overflow-y:auto;padding:10px;}
+
+/* Day cards */
+.day-card{background:#fff;border:1px solid #eee;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.day-header{display:flex;align-items:center;padding:8px 12px;background:#fdf6ee;}
+.day-label{font-weight:bold;font-size:16px;width:28px;}
+.day-body{padding:10px 12px;}
+.dish-row{display:flex;align-items:center;padding:4px 0;}
+.dish-label{font-size:11px;color:#999;width:32px;flex-shrink:0;}
+.dish-name{flex:1;font-size:15px;}
+.dish-name.clickable{color:#e8703a;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(232,112,58,0.3);}
+.dish-name.clickable:hover{color:#c55a2a;}
+
+/* Weekend */
+.weekend-card{background:#f9f9f9;border:1px solid #eee;border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.weekend-title{background:#795548;color:#fff;padding:6px 12px;font-size:14px;font-weight:bold;}
+.weekend-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#ddd;}
+.weekend-cell{background:#fff;padding:10px 12px;}
+.weekend-slot{font-size:11px;color:#999;margin-bottom:3px;}
+.weekend-menu{font-size:14px;color:#e8703a;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(232,112,58,0.3);}
+
+/* Shopping list */
+.shop-category{margin-bottom:14px;}
+.shop-cat-title{background:#e8703a;color:#fff;padding:6px 12px;border-radius:8px;font-size:14px;font-weight:bold;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.shop-item{display:flex;align-items:flex-start;padding:7px 10px;background:#fff;border:1px solid #eee;border-radius:7px;margin-bottom:5px;}
+.shop-item-check{width:22px;height:22px;border:2px solid #ccc;border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:10px;transition:all 0.15s;}
+.shop-item-check.checked{background:#e8703a;border-color:#e8703a;color:#fff;}
+.shop-item-info{flex:1;}
+.shop-item-name{font-size:14px;font-weight:bold;}
+.shop-item-qty{font-size:12px;color:#e8703a;margin-top:1px;}
+.shop-item-note{font-size:11px;color:#999;margin-top:1px;}
+.shop-item.checked-row .shop-item-name{text-decoration:line-through;color:#bbb;}
+.shop-reset{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;margin-bottom:12px;display:block;width:100%;}
+
+/* Recipes */
+.recipe-search{width:100%;padding:9px 14px;border:1px solid #ddd;border-radius:20px;font-size:14px;margin-bottom:12px;outline:none;}
+.recipe-section{margin-bottom:14px;}
+.recipe-section-title{font-size:13px;color:#999;border-bottom:1px solid #eee;padding-bottom:4px;margin-bottom:8px;}
+.recipe-item{display:flex;align-items:center;padding:9px 12px;background:#fff;border:1px solid #eee;border-radius:8px;margin-bottom:5px;cursor:pointer;transition:background 0.1s;}
+.recipe-item:hover{background:#fdf6ee;}
+.recipe-item-name{flex:1;font-size:14px;}
+.recipe-arrow{color:#ccc;font-size:16px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.modal-overlay.hidden{display:none;}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;padding:20px;}
+.modal-title{font-size:18px;font-weight:bold;margin-bottom:4px;}
+.modal-weeks{font-size:12px;color:#999;margin-bottom:14px;}
+.modal-section{margin-bottom:14px;}
+.modal-section h3{font-size:13px;color:#e8703a;font-weight:bold;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #fce0cc;}
+.modal-close{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:#999;margin-top:-4px;}
+.ingredient-list{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.ingredient-item{font-size:13px;padding:4px 8px;background:#fdf6ee;border-radius:5px;}
+.ingredient-item span{color:#e8703a;font-weight:bold;}
+.step-list{counter-reset:step;}
+.step-item{font-size:13px;padding:5px 0;border-bottom:1px dotted #eee;display:flex;gap:8px;}
+.step-item:last-child{border-bottom:none;}
+.step-num{color:#e8703a;font-weight:bold;flex-shrink:0;min-width:20px;}
+.note-box{background:#fff8e1;border-radius:8px;padding:8px 12px;font-size:12px;color:#795548;}
+
+/* Staples section */
+.staples-card{background:#e8f5e9;border-radius:10px;padding:10px 14px;margin-bottom:14px;}
+.staples-title{font-size:13px;font-weight:bold;color:#2e7d32;margin-bottom:8px;}
+.staples-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.staple-item{background:#fff;border:1px solid #a5d6a7;border-radius:12px;padding:3px 10px;font-size:12px;color:#2e7d32;}
+
+@media(min-width:600px){
+  body{background:#f0e8de;}
+  #app{border-radius:0;box-shadow:0 0 20px rgba(0,0,0,0.1);}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🍚 献立アプリ</h1>
+    <div class="week-row" id="weekRow"></div>
+  </header>
+  <main id="mainContent"></main>
+  <nav class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('menu')" id="tab-menu">
+      <span class="tab-icon">📅</span>献立
+    </button>
+    <button class="tab-btn" onclick="switchTab('shopping')" id="tab-shopping">
+      <span class="tab-icon">🛒</span>買い物
+    </button>
+    <button class="tab-btn" onclick="switchTab('recipe')" id="tab-recipe">
+      <span class="tab-icon">📖</span>レシピ
+    </button>
+  </nav>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<script>
+// ============================================================
+// 設定
+// ============================================================
+const TOTAL_WEEKS = 4;
+const STAPLES = ["キムチ","納豆","豆腐","漬物","ゆで卵","チーズ","ちりめんじゃこ"];
+
+// ============================================================
+// 献立データ（メインのみ・4週）
+// ============================================================
+const WEEKEND = [
+  { slot:"土昼", menu:"パスタ" },
+  { slot:"土夜", menu:"お好み焼き" },
+  { slot:"日昼", menu:"ペッパーライス" },
+  { slot:"日夜", menu:"カレー" },
+];
+
+const menuData = {
+  1: {
+    days: [
+      { day:"月", main:"から揚げ" },
+      { day:"火", main:"豚の生姜焼き" },
+      { day:"水", main:"肉じゃが" },
+      { day:"木", main:"餃子（冷凍）" },
+      { day:"金", main:"豚バラ大根" },
+    ],
+    weekend: WEEKEND
+  },
+  2: {
+    days: [
+      { day:"月", main:"ハンバーグ" },
+      { day:"火", main:"鶏肉のトマト煮" },
+      { day:"水", main:"豚の角煮（市販）" },
+      { day:"木", main:"豚キムチ炒め" },
+      { day:"金", main:"チキンソテー" },
+    ],
+    weekend: WEEKEND
+  },
+  3: {
+    days: [
+      { day:"月", main:"回鍋肉" },
+      { day:"火", main:"春巻き（出来合い）" },
+      { day:"水", main:"麻婆豆腐" },
+      { day:"木", main:"鶏の照り焼き" },
+      { day:"金", main:"豚こまとキャベツの炒め物" },
+    ],
+    weekend: WEEKEND
+  },
+  4: {
+    days: [
+      { day:"月", main:"ロールキャベツ（出来合い）" },
+    ],
+    weekend: WEEKEND
+  }
+};
+
+// ============================================================
+// 買い物データ
+// ============================================================
+// 今週のメイン食材（週ごとの肉など）
+const shoppingMeat = {
+  1:[
+    {name:"鶏もも肉",qty:"600g",note:"から揚げ"},
+    {name:"豚ロース薄切り",qty:"400g",note:"豚の生姜焼き"},
+    {name:"豚こま切れ",qty:"300g",note:"肉じゃが"},
+    {name:"じゃがいも",qty:"4個",note:"肉じゃが"},
+    {name:"冷凍餃子",qty:"1〜2パック",note:"餃子"},
+    {name:"豚バラ薄切り",qty:"300g",note:"豚バラ大根"},
+  ],
+  2:[
+    {name:"合いびき肉",qty:"400g",note:"ハンバーグ"},
+    {name:"鶏もも肉",qty:"500g",note:"鶏肉のトマト煮"},
+    {name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"},
+    {name:"市販豚の角煮",qty:"1パック",note:"豚の角煮"},
+    {name:"豚バラ薄切り",qty:"300g",note:"豚キムチ炒め"},
+    {name:"鶏もも肉",qty:"2枚",note:"チキンソテー"},
+  ],
+  3:[
+    {name:"豚バラ薄切り",qty:"300g",note:"回鍋肉"},
+    {name:"市販春巻き",qty:"1〜2袋",note:"春巻き"},
+    {name:"豚ひき肉",qty:"200g",note:"麻婆豆腐"},
+    {name:"鶏もも肉",qty:"2枚",note:"鶏の照り焼き"},
+    {name:"豚こま切れ",qty:"300g",note:"豚こまとキャベツの炒め物"},
+  ],
+  4:[
+    {name:"市販ロールキャベツ",qty:"1袋",note:"ロールキャベツ"},
+  ]
+};
+
+// 週末メニュー用（毎週同じ）
+const WEEKEND_SHOPPING = [
+  {name:"パスタ麺",qty:"適量",note:"土昼・パスタ"},
+  {name:"豚バラ薄切り",qty:"150g",note:"お好み焼き"},
+  {name:"山芋",qty:"100g",note:"お好み焼き"},
+  {name:"牛こま切れ",qty:"250g",note:"ペッパーライス"},
+  {name:"コーン缶",qty:"1缶",note:"ペッパーライス"},
+  {name:"カレールウ",qty:"1箱",note:"カレー"},
+  {name:"カレー用肉",qty:"300g",note:"カレー"},
+];
+
+// 毎週の定番（野菜・常備）
+const EXTRA_SHOPPING = [
+  "きのこ","ブロッコリー","カリフラワー",
+  "ほうれん草","レタス（葉物全般）","サツマイモ",
+  "キムチ","ネギ類","タマネギ","レモン","ナス・ピーマン・パプリカ","カボチャ",
+  "トマト","アボカド","キャベツ","ラディッシュ",
+  "かぶ","大根","しょうが","ニンニク","ベリー類","チーズ",
+  "食パン","卵","牛乳","納豆","豆腐",
+  "魚","バナナ","生クリーム","あずき"
+];
+
+// ============================================================
+// レシピデータ
+// ============================================================
+const recipes = {
+  // ===== メイン =====
+  "から揚げ":{
+    category:"メイン", weeks:"1週（月）",
+    ingredients:[
+      {name:"鶏もも肉",qty:"600g"},
+      {name:"しょうゆ",qty:"大さじ2"},
+      {name:"みりん",qty:"大さじ1"},
+      {name:"酒",qty:"大さじ1"},
+      {name:"おろしにんにく",qty:"小さじ1"},
+      {name:"おろし生姜",qty:"小さじ1"},
+      {name:"片栗粉",qty:"適量"},
+      {name:"揚げ油",qty:"適量"},
+    ],
+    steps:[
+      "鶏肉をひと口大に切る",
+      "しょうゆ・みりん・酒・にんにく・生姜を合わせ、鶏肉を30分漬ける",
+      "水気を切り片栗粉をまぶす",
+      "180℃の油で5〜6分揚げる",
+    ]
+  },
+  "豚の生姜焼き":{
+    category:"メイン", weeks:"1週（火）",
+    ingredients:[
+      {name:"豚ロース薄切り",qty:"400g"},
+      {name:"玉ねぎ",qty:"1個"},
+      {name:"しょうゆ",qty:"大さじ2"},
+      {name:"みりん",qty:"大さじ2"},
+      {name:"酒",qty:"大さじ1"},
+      {name:"おろし生姜",qty:"大さじ1"},
+    ],
+    steps:[
+      "玉ねぎを薄切りにする",
+      "調味料を合わせておく",
+      "フライパンを中火で熱し豚肉を炒める",
+      "色が変わったら玉ねぎを加え炒める",
+      "調味料を加えて炒め絡めて完成",
+    ]
+  },
+  "肉じゃが":{
+    category:"メイン", weeks:"1週（水）",
+    ingredients:[
+      {name:"豚こま切れ",qty:"300g"},
+      {name:"じゃがいも",qty:"4個"},
+      {name:"玉ねぎ",qty:"1個"},
+      {name:"にんじん",qty:"1本"},
+      {name:"だし",qty:"300ml"},
+      {name:"しょうゆ",qty:"大さじ3"},
+      {name:"みりん",qty:"大さじ3"},
+      {name:"砂糖",qty:"大さじ2"},
+    ],
+    steps:[
+      "じゃがいも・玉ねぎ・にんじんを食べやすく切る",
+      "油で豚肉を炒め→玉ねぎ→にんじん→じゃがいもの順に加える",
+      "だし・しょうゆ・みりん・砂糖を加える",
+      "落とし蓋をして弱中火で20分煮る",
+    ]
+  },
+  "餃子（冷凍）":{
+    category:"メイン", weeks:"1週（木）", note:"冷凍餃子を焼くだけ",
+    ingredients:[
+      {name:"冷凍餃子",qty:"1〜2パック"},
+      {name:"サラダ油",qty:"大さじ1"},
+      {name:"水",qty:"50ml"},
+    ],
+    steps:[
+      "フライパンに油を引き餃子を並べる",
+      "中火で1分焼いて焦げ目をつける",
+      "水を加えてふたをして5〜6分蒸し焼き",
+      "水がなくなったらふたを取り強火でパリッとさせる",
+    ]
+  },
+  "豚バラ大根":{
+    category:"メイン", weeks:"1週（金）",
+    ingredients:[
+      {name:"豚バラ薄切り",qty:"300g"},
+      {name:"大根",qty:"1/2本"},
+      {name:"しょうゆ",qty:"大さじ3"},
+      {name:"みりん",qty:"大さじ3"},
+      {name:"酒",qty:"大さじ2"},
+      {name:"砂糖",qty:"大さじ1"},
+      {name:"おろし生姜",qty:"小さじ1"},
+      {name:"水",qty:"200ml"},
+    ],
+    steps:[
+      "大根を2cm厚の輪切りにして下茹で（10分）",
+      "豚バラを炒めて余分な脂を拭く",
+      "大根・調味料・水を加える",
+      "落とし蓋をして弱中火で20分煮る",
+    ]
+  },
+  "ハンバーグ":{
+    category:"メイン", weeks:"2週（月）",
+    ingredients:[
+      {name:"合いびき肉",qty:"400g"},
+      {name:"玉ねぎ",qty:"1個"},
+      {name:"パン粉",qty:"大さじ4"},
+      {name:"牛乳",qty:"大さじ3"},
+      {name:"卵",qty:"1個"},
+      {name:"塩こしょう",qty:"少々"},
+      {name:"ケチャップ",qty:"大さじ3"},
+      {name:"中濃ソース",qty:"大さじ3"},
+    ],
+    steps:[
+      "玉ねぎをみじん切りにして炒め冷ます",
+      "パン粉を牛乳に浸す",
+      "ひき肉・玉ねぎ・パン粉・卵・塩こしょうをよく混ぜる",
+      "小判型に成形し真ん中を少し凹ませる",
+      "中火で両面に焦げ目をつけ、ふたをして5分蒸し焼き",
+      "ケチャップ＋ソースを合わせてかける",
+    ]
+  },
+  "鶏肉のトマト煮":{
+    category:"メイン", weeks:"2週（火）",
+    ingredients:[
+      {name:"鶏もも肉",qty:"500g"},
+      {name:"トマト缶",qty:"1缶"},
+      {name:"玉ねぎ",qty:"1個"},
+      {name:"にんにく",qty:"1片"},
+      {name:"コンソメ",qty:"1個"},
+      {name:"オリーブ油",qty:"大さじ1"},
+      {name:"塩こしょう",qty:"少々"},
+    ],
+    steps:[
+      "鶏肉をひと口大に切り塩こしょうする",
+      "オリーブ油でにんにく・玉ねぎを炒める",
+      "鶏肉を加えて炒める",
+      "トマト缶・コンソメを加えて20分煮込む",
+    ]
+  },
+  "豚の角煮（市販）":{
+    category:"メイン", weeks:"2週（水）", note:"市販品を温めるだけ",
+    ingredients:[
+      {name:"市販豚の角煮",qty:"1パック"},
+    ],
+    steps:[
+      "パッケージのまま湯煎または電子レンジで温める",
+      "器に盛り付けて完成",
+    ]
+  },
+  "豚キムチ炒め":{
+    category:"メイン", weeks:"2週（木）",
+    ingredients:[
+      {name:"豚バラ薄切り",qty:"300g"},
+      {name:"キムチ",qty:"200g"},
+      {name:"玉ねぎ",qty:"1個"},
+      {name:"ごま油",qty:"大さじ1"},
+      {name:"しょうゆ",qty:"大さじ1"},
+      {name:"砂糖",qty:"小さじ1"},
+    ],
+    steps:[
+      "玉ねぎを薄切りにする",
+      "ごま油で玉ねぎを炒める",
+      "豚バラを加えて炒める",
+      "キムチを加えて炒め合わせる",
+      "しょうゆ・砂糖で味を整える",
+    ]
+  },
+  "チキンソテー":{
+    category:"メイン", weeks:"2週（金）",
+    ingredients:[
+      {name:"鶏もも肉",qty:"2枚"},
+      {name:"にんにく",qty:"1片"},
+      {name:"塩こしょう",qty:"少々"},
+      {name:"オリーブ油",qty:"大さじ1"},
+      {name:"レモン",qty:"1/2個"},
+    ],
+    steps:[
+      "鶏肉を開いて均一な厚さにし塩こしょうする",
+      "にんにくをスライスする",
+      "フライパンにオリーブ油とにんにくを入れ弱火で香りを出す",
+      "皮目を下にして中火で5〜6分焼く",
+      "裏返して3〜4分焼いて完成。レモンを添える",
+    ]
+  },
+  "回鍋肉":{
+    category:"メイン", weeks:"3週（月）",
+    ingredients:[
+      {name:"豚バラ薄切り",qty:"300g"},
+      {name:"キャベツ",qty:"1/2玉"},
+      {name:"ピーマン",qty:"3個"},
+      {name:"にんにく",qty:"1片"},
+      {name:"テンメンジャン",qty:"大さじ2"},
+      {name:"豆板醤",qty:"小さじ1"},
+      {name:"ごま油",qty:"大さじ1"},
+      {name:"しょうゆ",qty:"小さじ1"},
+    ],
+    steps:[
+      "キャベツをざく切り、ピーマンを短冊切りにする",
+      "ごま油でにんにく・豆板醤を弱火で炒める",
+      "豚バラを加えて中火で炒める",
+      "キャベツ・ピーマンを加えてざっと炒める",
+      "テンメンジャン・しょうゆで味付けして炒め合わせる",
+    ]
+  },
+  "春巻き（出来合い）":{
+    category:"メイン", weeks:"3週（火）", note:"市販品を揚げるまたは焼く",
+    ingredients:[
+      {name:"市販春巻き",qty:"1〜2袋"},
+      {name:"揚げ油",qty:"適量"},
+    ],
+    steps:[
+      "揚げる場合：170℃の油で4〜5分揚げる",
+      "オーブン焼きの場合：200℃で10〜12分",
+    ]
+  },
+  "麻婆豆腐":{
+    category:"メイン", weeks:"3週（水）",
+    ingredients:[
+      {name:"豆腐",qty:"2丁"},
+      {name:"豚ひき肉",qty:"200g"},
+      {name:"テンメンジャン",qty:"大さじ1"},
+      {name:"豆板醤",qty:"大さじ1"},
+      {name:"にんにく",qty:"1片"},
+      {name:"生姜",qty:"1かけ"},
+      {name:"鶏がらスープ",qty:"200ml"},
+      {name:"オイスターソース",qty:"大さじ1"},
+      {name:"片栗粉",qty:"大さじ1"},
+      {name:"ごま油",qty:"小さじ1"},
+      {name:"小葱",qty:"適量"},
+    ],
+    steps:[
+      "にんにく・生姜をみじん切りにする",
+      "ごま油でにんにく・生姜・豆板醤を炒める",
+      "ひき肉を加えてよく炒める",
+      "鶏がらスープ・テンメンジャン・オイスターソースを加える",
+      "豆腐を崩さないように加えて温める",
+      "水溶き片栗粉でとろみをつけ小葱を散らす",
+    ]
+  },
+  "鶏の照り焼き":{
+    category:"メイン", weeks:"3週（木）",
+    ingredients:[
+      {name:"鶏もも肉",qty:"2枚"},
+      {name:"しょうゆ",qty:"大さじ3"},
+      {name:"みりん",qty:"大さじ3"},
+      {name:"酒",qty:"大さじ2"},
+      {name:"砂糖",qty:"大さじ1"},
+    ],
+    steps:[
+      "鶏肉を開いて均一な厚さにする",
+      "フライパンで皮目から中火で5〜6分焼く",
+      "裏返して3〜4分焼く",
+      "余分な油を拭き取り調味料を加えて絡める",
+      "照りが出るまで強めの中火で炒め絡める",
+    ]
+  },
+  "豚こまとキャベツの炒め物":{
+    category:"メイン", weeks:"3週（金）",
+    ingredients:[
+      {name:"豚こま切れ",qty:"300g"},
+      {name:"キャベツ",qty:"1/4玉"},
+      {name:"塩こしょう",qty:"少々"},
+      {name:"しょうゆ",qty:"大さじ1"},
+      {name:"ごま油",qty:"小さじ1"},
+    ],
+    steps:[
+      "キャベツをざく切りにする",
+      "フライパンで豚こまを炒めて塩こしょうする",
+      "キャベツを加えてざっと炒める",
+      "しょうゆ・ごま油で味付けして完成",
+    ]
+  },
+  "ロールキャベツ（出来合い）":{
+    category:"メイン", weeks:"4週（月）", note:"市販品を温めるだけ",
+    ingredients:[
+      {name:"市販ロールキャベツ",qty:"1袋"},
+    ],
+    steps:[
+      "パッケージのまま鍋で温める",
+      "または電子レンジで加熱する",
+    ]
+  },
+
+  // ===== 週末 =====
+  "パスタ":{
+    category:"週末", weeks:"毎週（土昼）", note:"お好みのソースで",
+    ingredients:[
+      {name:"パスタ麺",qty:"適量"},
+      {name:"お好みのソース",qty:"適量"},
+      {name:"塩",qty:"適量（茹で用）"},
+    ],
+    steps:[
+      "たっぷりの湯に塩を入れパスタを茹でる",
+      "ソースを温める（またはフライパンで具材と和える）",
+      "茹で上がったパスタとソースを和える",
+    ]
+  },
+  "お好み焼き":{
+    category:"週末", weeks:"毎週（土夜）",
+    ingredients:[
+      {name:"キャベツ",qty:"1/4玉"},
+      {name:"山芋",qty:"100g"},
+      {name:"豚バラ薄切り",qty:"150g"},
+      {name:"卵",qty:"2個"},
+      {name:"小麦粉",qty:"100g"},
+      {name:"だし（または水）",qty:"100ml"},
+      {name:"ソース・マヨ・青のり",qty:"適量"},
+    ],
+    steps:[
+      "キャベツをみじん切り、山芋をすりおろす",
+      "小麦粉・だし・卵・山芋を混ぜ、キャベツを加える",
+      "フライパンに生地を流し、上に豚バラをのせる",
+      "両面をこんがり焼く",
+      "ソース・マヨ・青のりをかける",
+    ]
+  },
+  "ペッパーライス":{
+    category:"週末", weeks:"毎週（日昼）",
+    ingredients:[
+      {name:"牛こま切れ",qty:"250g"},
+      {name:"コーン缶",qty:"1缶"},
+      {name:"ごはん",qty:"3〜4杯"},
+      {name:"バター",qty:"大さじ2"},
+      {name:"焼肉のたれ（またはしょうゆ）",qty:"大さじ3"},
+      {name:"黒こしょう",qty:"適量"},
+      {name:"小葱",qty:"お好み"},
+    ],
+    steps:[
+      "フライパンにバターを溶かし牛肉を炒める",
+      "ごはん・コーンを加えて炒める",
+      "焼肉のたれ・黒こしょうで味付けする",
+      "小葱を散らして完成",
+    ]
+  },
+  "カレー":{
+    category:"週末", weeks:"毎週（日夜）",
+    ingredients:[
+      {name:"カレールウ",qty:"1箱"},
+      {name:"カレー用肉",qty:"300g"},
+      {name:"じゃがいも",qty:"2個"},
+      {name:"にんじん",qty:"1本"},
+      {name:"玉ねぎ",qty:"2個"},
+      {name:"水",qty:"700ml"},
+      {name:"ごはん",qty:"3〜4杯"},
+    ],
+    steps:[
+      "肉と野菜をひと口大に切る",
+      "鍋で肉を炒め、野菜を加えて炒める",
+      "水を加えて20分煮込む",
+      "火を止めてルウを溶かし、再度弱火で煮る",
+    ]
+  },
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentWeek = 1;
+let currentTab = 'menu';
+let checkedItems = JSON.parse(localStorage.getItem('checked_'+currentWeek)||'{}');
+
+function getChecked(week){
+  return JSON.parse(localStorage.getItem('checked_'+week)||'{}');
+}
+function saveChecked(week, obj){
+  localStorage.setItem('checked_'+week, JSON.stringify(obj));
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderWeekButtons(){
+  const row = document.getElementById('weekRow');
+  row.innerHTML = '';
+  for(let w=1;w<=TOTAL_WEEKS;w++){
+    const btn = document.createElement('button');
+    btn.className = 'week-btn'+(w===currentWeek?' active':'');
+    btn.textContent = w+'週';
+    btn.onclick = (()=>{const ww=w;return()=>selectWeek(ww);})();
+    row.appendChild(btn);
+  }
+}
+
+function selectWeek(w){
+  currentWeek = w;
+  checkedItems = getChecked(w);
+  renderWeekButtons();
+  renderContent();
+}
+
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  renderContent();
+}
+
+function renderContent(){
+  if(currentTab==='menu') renderMenu();
+  else if(currentTab==='shopping') renderShopping();
+  else renderRecipes();
+}
+
+// ---------- MENU TAB ----------
+function renderMenu(){
+  const main = document.getElementById('mainContent');
+  const wdata = menuData[currentWeek];
+  let html = '';
+
+  // 常備食
+  html += `<div class="staples-card"><div class="staples-title">🥢 常備食（いつでも一品）</div><div class="staples-grid">`;
+  STAPLES.forEach(s=>{ html+=`<span class="staple-item">${s}</span>`; });
+  html += `</div></div>`;
+
+  // 平日
+  wdata.days.forEach(d=>{
+    const hasRecipe = !!recipes[d.main];
+    const nameHtml = hasRecipe
+      ? `<span class="dish-name clickable" onclick="openRecipe('${esc(d.main)}')">${d.main}</span>`
+      : `<span class="dish-name" style="color:#bbb">${d.main}</span>`;
+    html += `<div class="day-card">
+      <div class="day-header">
+        <span class="day-label">${d.day}</span>
+      </div>
+      <div class="day-body">
+        <div class="dish-row">
+          <span class="dish-label">メイン</span>
+          ${nameHtml}
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // 週末
+  html += `<div class="weekend-card"><div class="weekend-title">🏠 週末（土日）</div><div class="weekend-grid">`;
+  wdata.weekend.forEach(we=>{
+    html += `<div class="weekend-cell"><div class="weekend-slot">${we.slot}</div><div class="weekend-menu" onclick="openRecipe('${esc(we.menu)}')">${we.menu}</div></div>`;
+  });
+  html += `</div></div>`;
+
+  main.innerHTML = html;
+}
+
+// ---------- SHOPPING TAB ----------
+function renderShopping(){
+  const main = document.getElementById('mainContent');
+  checkedItems = getChecked(currentWeek);
+
+  let html = `<button class="shop-reset" onclick="resetChecks()">✓ チェックをリセット</button>`;
+
+  html += shopSection('🥩 今週のメイン食材', shoppingMeat[currentWeek], 'main');
+  html += shopSection('🍝 週末メニュー用（毎週）', WEEKEND_SHOPPING, 'week');
+  html += shopSection('🛒 毎週の定番（野菜・常備）', EXTRA_SHOPPING, 'extra');
+
+  main.innerHTML = html;
+}
+
+function shopSection(title, items, prefix){
+  if(!items || items.length===0) return '';
+  let h = `<div class="shop-category"><div class="shop-cat-title">${title}</div>`;
+  items.forEach((item,idx)=>{
+    const obj = (typeof item==='string') ? {name:item, qty:'', note:''} : item;
+    const key = prefix+'_'+idx;
+    const checked = checkedItems[key];
+    h += `<div class="shop-item${checked?' checked-row':''}">
+      <div class="shop-item-check${checked?' checked':''}" onclick="toggleCheck('${key}')">${checked?'✓':''}</div>
+      <div class="shop-item-info">
+        <div class="shop-item-name">${obj.name}</div>
+        ${obj.qty?`<div class="shop-item-qty">${obj.qty}</div>`:''}
+        ${obj.note?`<div class="shop-item-note">${obj.note}</div>`:''}
+      </div>
+    </div>`;
+  });
+  h += `</div>`;
+  return h;
+}
+
+function toggleCheck(key){
+  checkedItems[key] = !checkedItems[key];
+  saveChecked(currentWeek, checkedItems);
+  renderShopping();
+}
+
+function resetChecks(){
+  checkedItems = {};
+  saveChecked(currentWeek, checkedItems);
+  renderShopping();
+}
+
+// ---------- RECIPE TAB ----------
+function renderRecipes(){
+  const main = document.getElementById('mainContent');
+  const cats = { メイン:[], 週末:[] };
+  Object.entries(recipes).forEach(([name,r])=>{
+    if(cats[r.category]) cats[r.category].push(name);
+  });
+
+  let html = `<input class="recipe-search" type="text" placeholder="🔍 レシピを検索..." oninput="filterRecipes(this.value)" id="recipeSearch">`;
+  html += `<div id="recipeList">`;
+
+  const catLabels = { メイン:"🍖 メイン料理", 週末:"🏠 週末メニュー" };
+  Object.entries(cats).forEach(([cat,names])=>{
+    if(names.length===0) return;
+    html += `<div class="recipe-section"><div class="recipe-section-title">${catLabels[cat]||cat}</div>`;
+    names.forEach(name=>{
+      const r = recipes[name];
+      html += `<div class="recipe-item" onclick="openRecipe('${esc(name)}')">
+        <span class="recipe-item-name">${name}<br><span style="font-size:11px;color:#bbb">${r.weeks||''}</span></span>
+        <span class="recipe-arrow">›</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  html += `</div>`;
+  main.innerHTML = html;
+}
+
+function filterRecipes(q){
+  q = q.toLowerCase();
+  document.querySelectorAll('.recipe-item').forEach(el=>{
+    const text = el.textContent.toLowerCase();
+    el.style.display = text.includes(q)?'':'none';
+  });
+  document.querySelectorAll('.recipe-section').forEach(sec=>{
+    const items = sec.querySelectorAll('.recipe-item');
+    const visible = [...items].some(i=>i.style.display!=='none');
+    sec.style.display = visible?'':'none';
+  });
+}
+
+// ---------- MODAL ----------
+function esc(s){ return s.replace(/'/g,"\\'"); }
+
+function openRecipe(name){
+  const r = recipes[name];
+  if(!r){ alert('レシピがまだ登録されていません：'+name); return; }
+
+  let html = `<button class="modal-close" onclick="closeModal()">✕</button>`;
+  html += `<div class="modal-title">${name}</div>`;
+  if(r.weeks) html += `<div class="modal-weeks">📅 ${r.weeks}</div>`;
+  if(r.note) html += `<div class="note-box" style="margin-bottom:12px">💡 ${r.note}</div>`;
+
+  html += `<div class="modal-section"><h3>材料（約3〜4人分）</h3><div class="ingredient-list">`;
+  (r.ingredients||[]).forEach(ing=>{
+    html += `<div class="ingredient-item">${ing.name} <span>${ing.qty}</span></div>`;
+  });
+  html += `</div></div>`;
+
+  html += `<div class="modal-section"><h3>作り方</h3><div class="step-list">`;
+  (r.steps||[]).forEach((step,i)=>{
+    html += `<div class="step-item"><span class="step-num">${i+1}</span><span>${step}</span></div>`;
+  });
+  html += `</div></div>`;
+
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e){
+  if(e.target===document.getElementById('modalOverlay')) closeModal();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderWeekButtons();
+renderContent();
+</script>
+</body>
+</html>
