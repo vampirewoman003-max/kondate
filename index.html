@@ -91,6 +91,15 @@ main{flex:1;overflow-y:auto;padding:10px;}
 .staples-grid{display:flex;flex-wrap:wrap;gap:6px;}
 .staple-item{background:#fff;border:1px solid #a5d6a7;border-radius:12px;padding:3px 10px;font-size:12px;color:#2e7d32;}
 
+/* Schedule */
+.sched-head{font-size:15px;font-weight:bold;color:#2e7d32;background:#e8f5e9;border-radius:10px;padding:10px 14px;margin-bottom:12px;}
+.sched-item{display:flex;align-items:flex-start;background:#fff;border:1px solid #eee;border-radius:10px;margin-bottom:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.sched-time{flex-shrink:0;width:58px;font-size:12px;font-weight:bold;color:#e8703a;padding-top:2px;}
+.sched-icon{font-size:22px;margin:0 10px;flex-shrink:0;}
+.sched-body{flex:1;}
+.sched-title{font-size:15px;}
+.sched-note{font-size:12px;color:#795548;background:#fff8e1;border-radius:6px;padding:2px 8px;margin-top:5px;display:inline-block;}
+
 @media(min-width:600px){
   body{background:#f0e8de;}
   #app{border-radius:0;box-shadow:0 0 20px rgba(0,0,0,0.1);}
@@ -113,6 +122,9 @@ main{flex:1;overflow-y:auto;padding:10px;}
     </button>
     <button class="tab-btn" onclick="switchTab('recipe')" id="tab-recipe">
       <span class="tab-icon">📖</span>レシピ
+    </button>
+    <button class="tab-btn" onclick="switchTab('schedule')" id="tab-schedule">
+      <span class="tab-icon">🌿</span>1日の流れ
     </button>
   </nav>
 </div>
@@ -626,7 +638,36 @@ function switchTab(tab){
 function renderContent(){
   if(currentTab==='menu') renderMenu();
   else if(currentTab==='shopping') renderShopping();
-  else renderRecipes();
+  else if(currentTab==='recipe') renderRecipes();
+  else renderSchedule();
+}
+
+// ---------- SCHEDULE TAB ----------
+const SCHEDULE = [
+  { time:"起床後", icon:"🍋", title:"レモン水を飲む" },
+  { time:"午前", icon:"🥤", title:"酵素ソーダ" },
+  { time:"午前", icon:"💪", title:"筋トレ" },
+  { time:"午前", icon:"🧘", title:"ストレッチ" },
+  { time:"昼食", icon:"🍚", title:"豆腐・納豆・ご飯・味噌汁" },
+  { time:"夕飯", icon:"🐟", title:"魚・野菜・味噌汁", note:"19時には食べ終える" },
+  { time:"19時〜", icon:"👓", title:"ブルーライト眼鏡を着用" },
+  { time:"22時", icon:"🛌", title:"就寝" },
+];
+
+function renderSchedule(){
+  const main = document.getElementById('mainContent');
+  let html = `<div class="sched-head">🌿 1日のスケジュール</div>`;
+  SCHEDULE.forEach(s=>{
+    html += `<div class="sched-item">
+      <div class="sched-time">${s.time}</div>
+      <div class="sched-icon">${s.icon}</div>
+      <div class="sched-body">
+        <div class="sched-title">${s.title}</div>
+        ${s.note?`<div class="sched-note">⏰ ${s.note}</div>`:''}
+      </div>
+    </div>`;
+  });
+  main.innerHTML = html;
 }
 
 // ---------- MENU TAB ----------
