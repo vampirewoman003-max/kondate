@@ -125,7 +125,7 @@ main{flex:1;overflow-y:auto;padding:10px;}
 // ============================================================
 // 設定
 // ============================================================
-const TOTAL_WEEKS = 3;
+const TOTAL_WEEKS = 2;
 const STAPLES = ["キムチ","納豆","豆腐","漬物","ゆで卵","チーズ","ちりめんじゃこ"];
 
 // ============================================================
@@ -143,25 +143,19 @@ const menuData = {
     days: [
       { day:"月", main:"から揚げ" },
       { day:"火", main:"豚の生姜焼き" },
-      { day:"水", main:"肉じゃが" },
-      { day:"木", main:"餃子（手作り）" },
-      { day:"金", main:"ハンバーグ" },
+      { day:"水", main:"餃子（手作り）" },
+      { day:"木", main:"ハンバーグ" },
+      { day:"金", main:"鶏肉のトマト煮" },
     ],
     weekend: WEEKEND
   },
   2: {
     days: [
-      { day:"月", main:"鶏肉のトマト煮" },
-      { day:"火", main:"豚キムチ炒め" },
-      { day:"水", main:"チキンソテー" },
-      { day:"木", main:"回鍋肉" },
-      { day:"金", main:"麻婆豆腐" },
-    ],
-    weekend: WEEKEND
-  },
-  3: {
-    days: [
-      { day:"月", main:"鶏の照り焼き" },
+      { day:"月", main:"豚キムチ炒め" },
+      { day:"火", main:"チキンソテー" },
+      { day:"水", main:"回鍋肉" },
+      { day:"木", main:"麻婆豆腐" },
+      { day:"金", main:"鶏の照り焼き" },
     ],
     weekend: WEEKEND
   }
@@ -175,26 +169,22 @@ const weekMeat = {
   1:[
     {name:"鶏もも肉",qty:"600g",note:"から揚げ"},
     {name:"豚ロース薄切り",qty:"400g",note:"豚の生姜焼き"},
-    {name:"豚こま切れ",qty:"300g",note:"肉じゃが"},
     {name:"豚ひき肉",qty:"250g",note:"餃子(手作り)"},
     {name:"合いびき肉",qty:"400g",note:"ハンバーグ"},
+    {name:"鶏もも肉",qty:"500g",note:"鶏肉のトマト煮"},
   ],
   2:[
-    {name:"鶏もも肉",qty:"500g",note:"鶏肉のトマト煮"},
     {name:"豚バラ薄切り",qty:"600g",note:"豚キムチ・回鍋肉"},
     {name:"鶏もも肉",qty:"2枚",note:"チキンソテー"},
     {name:"豚ひき肉",qty:"200g",note:"麻婆豆腐"},
-  ],
-  3:[
     {name:"鶏もも肉",qty:"2枚",note:"鶏の照り焼き"},
   ]
 };
 
 // 平日メイン用の「肉以外」（週ごと）
 const weekExtra = {
-  1:{ yasai:[{name:"じゃがいも",qty:"4個",note:"肉じゃが"},{name:"ニラ",qty:"1/2束",note:"餃子"}], sonota:[{name:"餃子の皮",qty:"1袋(約25枚)",note:"餃子(手作り)"}] },
-  2:{ yasai:[], sonota:[{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}] },
-  3:{ yasai:[], sonota:[] }
+  1:{ yasai:[{name:"ニラ",qty:"1/2束",note:"餃子"}], sonota:[{name:"餃子の皮",qty:"1袋(約25枚)",note:"餃子(手作り)"},{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}] },
+  2:{ yasai:[], sonota:[] }
 };
 
 // 週末メニュー用（毎週同じ）
@@ -266,27 +256,8 @@ const recipes = {
       "調味料を加えて炒め絡めて完成",
     ]
   },
-  "肉じゃが":{
-    category:"メイン", weeks:"1週（水）",
-    ingredients:[
-      {name:"豚こま切れ",qty:"300g"},
-      {name:"じゃがいも",qty:"4個"},
-      {name:"玉ねぎ",qty:"1個"},
-      {name:"にんじん",qty:"1本"},
-      {name:"だし",qty:"300ml"},
-      {name:"しょうゆ",qty:"大さじ3"},
-      {name:"みりん",qty:"大さじ3"},
-      {name:"砂糖",qty:"大さじ2"},
-    ],
-    steps:[
-      "じゃがいも・玉ねぎ・にんじんを食べやすく切る",
-      "油で豚肉を炒め→玉ねぎ→にんじん→じゃがいもの順に加える",
-      "だし・しょうゆ・みりん・砂糖を加える",
-      "落とし蓋をして弱中火で20分煮る",
-    ]
-  },
   "餃子（手作り）":{
-    category:"メイン", weeks:"1週（木）", note:"手作り（約25個）",
+    category:"メイン", weeks:"1週（水）", note:"手作り（約25個）",
     ingredients:[
       {name:"豚ひき肉",qty:"250g"},
       {name:"餃子の皮",qty:"1袋(約25枚)"},
@@ -310,7 +281,7 @@ const recipes = {
     ]
   },
   "ハンバーグ":{
-    category:"メイン", weeks:"1週（金）",
+    category:"メイン", weeks:"1週（木）",
     ingredients:[
       {name:"合いびき肉",qty:"400g"},
       {name:"玉ねぎ",qty:"1個"},
@@ -331,7 +302,7 @@ const recipes = {
     ]
   },
   "鶏肉のトマト煮":{
-    category:"メイン", weeks:"2週（月）",
+    category:"メイン", weeks:"1週（金）",
     ingredients:[
       {name:"鶏もも肉",qty:"500g"},
       {name:"トマト缶",qty:"1缶"},
@@ -349,7 +320,7 @@ const recipes = {
     ]
   },
   "豚キムチ炒め":{
-    category:"メイン", weeks:"2週（火）",
+    category:"メイン", weeks:"2週（月）",
     ingredients:[
       {name:"豚バラ薄切り",qty:"300g"},
       {name:"キムチ",qty:"200g"},
@@ -367,7 +338,7 @@ const recipes = {
     ]
   },
   "チキンソテー":{
-    category:"メイン", weeks:"2週（水）",
+    category:"メイン", weeks:"2週（火）",
     ingredients:[
       {name:"鶏もも肉",qty:"2枚"},
       {name:"にんにく",qty:"1片"},
@@ -384,7 +355,7 @@ const recipes = {
     ]
   },
   "回鍋肉":{
-    category:"メイン", weeks:"2週（木）",
+    category:"メイン", weeks:"2週（水）",
     ingredients:[
       {name:"豚バラ薄切り",qty:"300g"},
       {name:"キャベツ",qty:"1/2玉"},
@@ -404,7 +375,7 @@ const recipes = {
     ]
   },
   "麻婆豆腐":{
-    category:"メイン", weeks:"2週（金）",
+    category:"メイン", weeks:"2週（木）",
     ingredients:[
       {name:"豆腐",qty:"2丁"},
       {name:"豚ひき肉",qty:"200g"},
@@ -428,7 +399,7 @@ const recipes = {
     ]
   },
   "鶏の照り焼き":{
-    category:"メイン", weeks:"3週（月）",
+    category:"メイン", weeks:"2週（金）",
     ingredients:[
       {name:"鶏もも肉",qty:"2枚"},
       {name:"しょうゆ",qty:"大さじ3"},
