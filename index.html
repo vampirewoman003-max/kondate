@@ -100,6 +100,20 @@ main{flex:1;overflow-y:auto;padding:10px;}
 .sched-title{font-size:15px;}
 .sched-note{font-size:12px;color:#795548;background:#fff8e1;border-radius:6px;padding:2px 8px;margin-top:5px;display:inline-block;}
 
+/* Record (monthly weight/memo) */
+.rec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.rec-month{font-size:16px;font-weight:bold;color:#e8703a;}
+.rec-nav{background:#fdf6ee;border:1px solid #e8703a;color:#e8703a;border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;white-space:nowrap;}
+.rec-table{width:100%;border-collapse:collapse;font-size:13px;}
+.rec-table th{background:#e8703a;color:#fff;padding:6px 4px;font-size:12px;}
+.rec-table td{border-bottom:1px solid #eee;padding:3px 4px;vertical-align:middle;}
+.rec-day{text-align:center;font-weight:bold;color:#795548;width:30px;}
+.rec-table input{border:1px solid #ddd;border-radius:6px;padding:6px;font-size:13px;outline:none;box-sizing:border-box;}
+.rec-table input:focus{border-color:#e8703a;}
+.rec-table input.rec-w{width:66px;text-align:center;}
+.rec-table input.rec-m{width:100%;}
+.rec-table td:nth-child(2){width:74px;}
+
 @media(min-width:600px){
   body{background:#f0e8de;}
   #app{border-radius:0;box-shadow:0 0 20px rgba(0,0,0,0.1);}
@@ -125,6 +139,9 @@ main{flex:1;overflow-y:auto;padding:10px;}
     </button>
     <button class="tab-btn" onclick="switchTab('schedule')" id="tab-schedule">
       <span class="tab-icon">🌿</span>1日の流れ
+    </button>
+    <button class="tab-btn" onclick="switchTab('record')" id="tab-record">
+      <span class="tab-icon">⚖️</span>記録
     </button>
   </nav>
 </div>
@@ -639,7 +656,55 @@ function renderContent(){
   if(currentTab==='menu') renderMenu();
   else if(currentTab==='shopping') renderShopping();
   else if(currentTab==='recipe') renderRecipes();
-  else renderSchedule();
+  else if(currentTab==='schedule') renderSchedule();
+  else renderRecord();
+}
+
+// ---------- RECORD TAB（マンスリー体重・メモ） ----------
+let recordYM = (()=>{ const d=new Date(); return { y:d.getFullYear(), m:d.getMonth()+1 }; })();
+
+function renderRecord(){
+  const main = document.getElementById('mainContent');
+  const { y, m } = recordYM;
+  const data = JSON.parse(localStorage.getItem('record_'+y+'-'+m) || '{}');
+  const days = new Date(y, m, 0).getDate();
+
+  let html = `<div class="rec-head">
+    <button class="rec-nav" onclick="changeMonth(-1)">◀ 前月</button>
+    <span class="rec-month">${y}年${m}月</span>
+    <button class="rec-nav" onclick="changeMonth(1)">翌月 ▶</button>
+  </div>`;
+  html += `<table class="rec-table"><thead><tr><th>日</th><th>体重(kg)</th><th>一言メモ</th></tr></thead><tbody>`;
+  for(let d=1; d<=days; d++){
+    const rec = data[d] || {};
+    const w = (rec.w||'').replace(/"/g,'&quot;');
+    const memo = (rec.m||'').replace(/"/g,'&quot;');
+    html += `<tr>
+      <td class="rec-day">${d}</td>
+      <td><input class="rec-w" type="text" inputmode="decimal" value="${w}" onchange="saveRecord(${d},'w',this.value)"></td>
+      <td><input class="rec-m" type="text" value="${memo}" placeholder="一言メモ" onchange="saveRecord(${d},'m',this.value)"></td>
+    </tr>`;
+  }
+  html += `</tbody></table>`;
+  main.innerHTML = html;
+}
+
+function changeMonth(delta){
+  let { y, m } = recordYM;
+  m += delta;
+  if(m<1){ m=12; y--; }
+  if(m>12){ m=1; y++; }
+  recordYM = { y, m };
+  renderRecord();
+}
+
+function saveRecord(day, field, val){
+  const { y, m } = recordYM;
+  const key = 'record_'+y+'-'+m;
+  const data = JSON.parse(localStorage.getItem(key) || '{}');
+  if(!data[day]) data[day] = {};
+  data[day][field] = val;
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 // ---------- SCHEDULE TAB ----------
