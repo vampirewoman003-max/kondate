@@ -730,6 +730,25 @@ const recipes = {
       "牛乳を加えて煮て、ごはんと共に盛り付ける",
     ]
   },
+
+  // ===== スイーツ =====
+  "米粉スノーボール":{
+    category:"スイーツ",
+    ingredients:[
+      {name:"米粉",qty:"50g"},
+      {name:"アーモンドプードル",qty:"25g"},
+      {name:"粉糖",qty:"20g"},
+      {name:"牛乳",qty:"小さじ2"},
+      {name:"粉砂糖（仕上げ用）",qty:"20g"},
+    ],
+    steps:[
+      "米粉・アーモンドプードル・粉糖をボウルに入れ混ぜる",
+      "牛乳を加えて生地をまとめる",
+      "一口大に丸めて天板に並べる",
+      "170℃のオーブンで15分焼く",
+      "粗熱が取れたら仕上げ用の粉砂糖をまぶす",
+    ]
+  },
 };
 
 // ============================================================
@@ -955,7 +974,7 @@ function resetChecks(){
 // ---------- RECIPE TAB ----------
 function renderRecipes(){
   const main = document.getElementById('mainContent');
-  const cats = { メイン:[], 週末:[] };
+  const cats = { メイン:[], 週末:[], スイーツ:[] };
   Object.entries(recipes).forEach(([name,r])=>{
     if(cats[r.category]) cats[r.category].push(name);
   });
@@ -963,7 +982,7 @@ function renderRecipes(){
   let html = `<input class="recipe-search" type="text" placeholder="🔍 レシピを検索..." oninput="filterRecipes(this.value)" id="recipeSearch">`;
   html += `<div id="recipeList">`;
 
-  const catLabels = { メイン:"🍖 メイン料理", 週末:"🏠 週末メニュー" };
+  const catLabels = { メイン:"🍖 メイン料理", 週末:"🏠 週末メニュー", スイーツ:"🍪 スイーツ" };
   Object.entries(cats).forEach(([cat,names])=>{
     if(names.length===0) return;
     html += `<div class="recipe-section"><div class="recipe-section-title">${catLabels[cat]||cat}</div>`;
