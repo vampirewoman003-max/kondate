@@ -734,6 +734,7 @@ const recipes = {
   // ===== スイーツ =====
   "米粉スノーボール":{
     category:"スイーツ",
+    videoUrl:"https://youtu.be/qAMQfb4_TiE?si=UawNwGM8KOmLz6Xj",
     ingredients:[
       {name:"米粉",qty:"50g"},
       {name:"アーモンドプードル",qty:"25g"},
@@ -751,6 +752,7 @@ const recipes = {
   },
   "米粉のシフォンケーキ（17cm）":{
     category:"スイーツ",
+    videoUrl:"https://www.youtube.com/watch?v=3khRKGWLd7w",
     note:"プレーンヨーグルトは無糖のものを使用／米粉は製菓用の粒子が細かいものがおすすめ／米油は無味無臭の植物油で代用可能",
     ingredients:[
       {name:"卵黄",qty:"4個分"},
@@ -1064,6 +1066,8 @@ function openRecipe(name){
     html += `<div class="step-item"><span class="step-num">${i+1}</span><span>${step}</span></div>`;
   });
   html += `</div></div>`;
+
+  if(r.videoUrl) html += `<div class="modal-section"><a href="${r.videoUrl}" target="_blank" rel="noopener">▶ 参考動画を見る</a></div>`;
 
   document.getElementById('modalBox').innerHTML = html;
   document.getElementById('modalOverlay').classList.remove('hidden');
