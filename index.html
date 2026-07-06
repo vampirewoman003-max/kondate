@@ -246,19 +246,40 @@ const weekExtra = {
   3:{ yasai:[{name:"じゃがいも",qty:"4個",note:"肉じゃが"},{name:"にんじん",qty:"1本",note:"肉じゃが"}], sonota:[{name:"パン粉",qty:"1袋",note:"ピーマン肉詰め・トンカツ"}] }
 };
 
-// 週末メニュー用（毎週同じ）
+// 週末メニュー用（週ごと）
 const weekendShop = {
-  niku:[
-    {name:"豚バラ薄切り",qty:"150g",note:"お好み焼き"},
-    {name:"牛こま切れ",qty:"250g",note:"ペッパーライス"},
-    {name:"カレー用肉",qty:"300g",note:"カレー"},
-  ],
-  yasai:[ {name:"山芋",qty:"100g",note:"お好み焼き"} ],
-  sonota:[
-    {name:"パスタ麺",qty:"適量",note:"パスタ"},
-    {name:"コーン缶",qty:"1缶",note:"ペッパーライス"},
-    {name:"カレールウ",qty:"1箱",note:"カレー"},
-  ]
+  1:{
+    niku:[
+      {name:"牛こま切れ",qty:"250g",note:"ペッパーライス"},
+      {name:"豚ひき肉",qty:"200g",note:"春雨と肉団子のスープ"},
+    ],
+    yasai:[
+      {name:"白菜",qty:"200g",note:"春雨と肉団子のスープ"},
+    ],
+    sonota:[
+      {name:"コーン缶",qty:"1缶",note:"ペッパーライス"},
+      {name:"緑豆春雨",qty:"40g",note:"春雨と肉団子のスープ"},
+    ]
+  },
+  2:{
+    niku:[
+      {name:"豚バラ肉",qty:"250g",note:"カレー"},
+      {name:"ベーコンスライス",qty:"5枚",note:"ミネストローネ"},
+    ],
+    yasai:[
+      {name:"にんじん",qty:"150g",note:"カレー"},
+      {name:"じゃがいも",qty:"180g",note:"カレー"},
+      {name:"にんじん",qty:"1/4本",note:"ミネストローネ"},
+      {name:"セロリ",qty:"1/4本",note:"ミネストローネ"},
+      {name:"じゃがいも",qty:"1個",note:"ミネストローネ"},
+    ],
+    sonota:[
+      {name:"カットトマト缶",qty:"400g",note:"ミネストローネ"},
+      {name:"コンソメ（顆粒）",qty:"小さじ2",note:"ミネストローネ"},
+      {name:"粉チーズ",qty:"少々",note:"ミネストローネ"},
+    ]
+  },
+  3:{ niku:[], yasai:[], sonota:[] } // 親子丼・キムチ鍋・エビピラフは未登録
 };
 
 // 毎週の定番
@@ -585,8 +606,61 @@ const recipes = {
       "ソース・マヨ・青のりをかける",
     ]
   },
+  "春雨と肉団子のスープ":{
+    category:"週末", weeks:"1週（土夜）",
+    ingredients:[
+      {name:"豚ひき肉",qty:"200g"},
+      {name:"長ねぎ（みじん切り）",qty:"5cm分"},
+      {name:"おろししょうが",qty:"小さじ1/2"},
+      {name:"しょうゆ（肉だね用）",qty:"小さじ1/4"},
+      {name:"塩",qty:"少々"},
+      {name:"こしょう",qty:"少々"},
+      {name:"溶き卵",qty:"1個"},
+      {name:"片栗粉",qty:"大さじ1"},
+      {name:"白菜（3cm幅に切る）",qty:"200g"},
+      {name:"緑豆春雨（戻さず使用）",qty:"40g"},
+      {name:"酒",qty:"大さじ1/2"},
+      {name:"しょうゆ（スープ用）",qty:"小さじ2"},
+      {name:"鶏ガラスープの素",qty:"大さじ1"},
+      {name:"水",qty:"750ml"},
+      {name:"粗挽きこしょう（仕上げ用）",qty:"少々"},
+    ],
+    note:"※豚ひき肉以降の肉だね材料（長ねぎ〜片栗粉）・水750ml・緑豆春雨の分量は写真がやや斜めで読み取りにくい箇所があるため、念のため元のレシピと見比べてください",
+    steps:[
+      "ボウルに豚ひき肉と肉だね材料（長ねぎ・しょうが・しょうゆ・塩・こしょう・溶き卵・片栗粉）を入れよく混ぜ合わせて8等分に分け、肉団子をつくる",
+      "鍋に肉団子・酒・しょうゆ・鶏ガラスープの素・水・白菜を入れ、ふたをしめる",
+      "「調理モード」→「圧力調理」→「3分」を選択し、調理スタート",
+      "ブザーが鳴ったら蒸気排出ボタンを押し、圧力を抜く",
+      "圧力表示ピンが下がったら、ふたをあけ、「保温/キャンセル」ボタンを押す",
+      "春雨を入れてふたをしめる",
+      "「調理モード」→「煮る」→「90℃」→「5分」を選択し、調理スタート",
+      "ブザーが鳴ったらふたをあけ、器に盛って粗挽きこしょうをふって出来上がり",
+    ]
+  },
+  "ミネストローネ":{
+    category:"週末", weeks:"2週（土夜）",
+    ingredients:[
+      {name:"キャベツ（1cm角に切る）",qty:"1/4個"},
+      {name:"玉ねぎ（1cm角に切る）",qty:"1/4個"},
+      {name:"にんじん（1cm角に切る）",qty:"1/4本"},
+      {name:"セロリ（1cm角に切る）",qty:"1/4本"},
+      {name:"じゃがいも（1cm角に切る）",qty:"1個"},
+      {name:"ベーコンスライス（1cm幅に切る）",qty:"5枚"},
+      {name:"カットトマト缶",qty:"400g"},
+      {name:"コンソメ（顆粒）",qty:"小さじ2"},
+      {name:"水",qty:"350ml"},
+      {name:"塩こしょう",qty:"少々"},
+      {name:"粉チーズ（仕上げ用）",qty:"少々"},
+    ],
+    steps:[
+      "鍋にすべての材料を入れ、全体を混ぜ、ふたをしめる",
+      "「調理モード」→「圧力調理」→「4分」を選択し、調理スタート",
+      "ブザーが鳴ったら蒸気排出ボタンを押し、圧力を抜く",
+      "圧力表示ピンが下がったら、ふたをあけ、器に盛って出来上がり",
+    ]
+  },
   "ペッパーライス":{
-    category:"週末", weeks:"毎週（日昼）",
+    category:"週末", weeks:"1週（土昼）",
     ingredients:[
       {name:"牛こま切れ",qty:"250g"},
       {name:"コーン缶",qty:"1缶"},
@@ -604,21 +678,35 @@ const recipes = {
     ]
   },
   "カレー":{
-    category:"週末", weeks:"毎週（日夜）",
+    category:"週末", weeks:"2週（日夜）", note:"ルウを使わず作る「至高のカレー」",
     ingredients:[
-      {name:"カレールウ",qty:"1箱"},
-      {name:"カレー用肉",qty:"300g"},
-      {name:"じゃがいも",qty:"2個"},
-      {name:"にんじん",qty:"1本"},
-      {name:"玉ねぎ",qty:"2個"},
-      {name:"水",qty:"700ml"},
+      {name:"油",qty:"大さじ1"},
+      {name:"にんにく",qty:"15g"},
+      {name:"生姜",qty:"15g"},
+      {name:"塩",qty:"1つまみ"},
+      {name:"玉ねぎ",qty:"250g"},
+      {name:"じゃがいも",qty:"180g"},
+      {name:"豚バラ肉",qty:"250g"},
+      {name:"にんじん",qty:"150g"},
+      {name:"ケチャップ",qty:"大さじ3"},
+      {name:"ウスターソース",qty:"大さじ2"},
+      {name:"オイスターソース",qty:"大さじ1と1/2"},
+      {name:"水",qty:"500cc"},
+      {name:"鶏ガラスープの素",qty:"小さじ2"},
+      {name:"コンソメ",qty:"小さじ1と1/2"},
+      {name:"バター",qty:"20g"},
+      {name:"薄力粉",qty:"大さじ3"},
+      {name:"カレー粉",qty:"大さじ2"},
+      {name:"牛乳",qty:"100g"},
       {name:"ごはん",qty:"3〜4杯"},
     ],
     steps:[
-      "肉と野菜をひと口大に切る",
-      "鍋で肉を炒め、野菜を加えて炒める",
-      "水を加えて20分煮込む",
-      "火を止めてルウを溶かし、再度弱火で煮る",
+      "油大さじ1でにんにく・生姜を炒め、塩ひとつまみ・玉ねぎを加えて炒める",
+      "じゃがいも・豚バラ肉・にんじんを加えて炒める",
+      "ケチャップ・ウスターソース・オイスターソースを加えて炒め、水・鶏ガラスープの素・コンソメを加えて煮溶かす",
+      "別鍋（またはフライパン）でバターに薄力粉を加えて炒め、カレー粉を加えて炒め、①のスープを少しずつ加えて伸ばす",
+      "伸ばしたルウを元の鍋に戻し入れ、10分煮る",
+      "牛乳を加えて煮て、ごはんと共に盛り付ける",
     ]
   },
 };
@@ -797,10 +885,11 @@ function renderShopping(){
   let html = `<button class="shop-reset" onclick="resetChecks()">✓ チェックをリセット</button>`;
 
   const wx = weekExtra[currentWeek] || { yasai:[], sonota:[] };
-  const niku    = [ ...(weekMeat[currentWeek]||[]), ...weekendShop.niku ];
-  const yasai   = [ ...wx.yasai, ...weekendShop.yasai, ...teiban.yasai ];
+  const ws = weekendShop[currentWeek] || { niku:[], yasai:[], sonota:[] };
+  const niku    = [ ...(weekMeat[currentWeek]||[]), ...ws.niku ];
+  const yasai   = [ ...wx.yasai, ...ws.yasai, ...teiban.yasai ];
   const nichihai= [ ...teiban.nichihai ];
-  const sonota  = [ ...wx.sonota, ...weekendShop.sonota, ...teiban.sonota ];
+  const sonota  = [ ...wx.sonota, ...ws.sonota, ...teiban.sonota ];
 
   html += shopSection('🥩 肉', niku, 'niku');
   html += shopSection('🥦 野菜・果物', yasai, 'yasai');
