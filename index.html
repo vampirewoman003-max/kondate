@@ -160,13 +160,6 @@ const STAPLES = ["キムチ","納豆","豆腐","漬物","ゆで卵","チーズ",
 // ============================================================
 // 献立データ（メインのみ・4週）
 // ============================================================
-const WEEKEND_DEFAULT = [
-  { slot:"土昼", menu:"パスタ" },
-  { slot:"土夜", menu:"お好み焼き" },
-  { slot:"日昼", menu:"ペッパーライス" },
-  { slot:"日夜", menu:"カレー" },
-];
-
 const WEEKEND_WEEK1 = [
   { slot:"土昼", menu:"ペッパーライス" },
   { slot:"土夜", menu:"春雨と肉団子のスープ・おにぎり" },
@@ -175,10 +168,17 @@ const WEEKEND_WEEK1 = [
 ];
 
 const WEEKEND_WEEK2 = [
-  { slot:"土昼", menu:"お好み焼き" },
+  { slot:"土昼", menu:"チャーハン" },
   { slot:"土夜", menu:"ミネストローネ・おにぎり" },
   { slot:"日昼", menu:"外食" },
   { slot:"日夜", menu:"カレー" },
+];
+
+const WEEKEND_WEEK3 = [
+  { slot:"土昼", menu:"親子丼" },
+  { slot:"土夜", menu:"キムチ鍋・おにぎり" },
+  { slot:"日昼", menu:"外食" },
+  { slot:"日夜", menu:"エビピラフ" },
 ];
 
 const menuData = {
@@ -209,7 +209,7 @@ const menuData = {
       { day:"水", main:"肉じゃが" },
       { day:"木", main:"トンカツ" },
     ],
-    weekend: WEEKEND_DEFAULT
+    weekend: WEEKEND_WEEK3
   }
 };
 
