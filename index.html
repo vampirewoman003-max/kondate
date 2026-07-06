@@ -1038,7 +1038,8 @@ function renderMenu(){
   // 週末
   html += `<div class="weekend-card"><div class="weekend-title">🏠 週末（土日）</div><div class="weekend-grid">`;
   wdata.weekend.forEach(we=>{
-    html += `<div class="weekend-cell"><div class="weekend-slot">${we.slot}</div><div class="weekend-menu" onclick="openRecipe('${esc(we.menu)}')">${we.menu}</div></div>`;
+    const mainDish = we.menu.split('・')[0];
+    html += `<div class="weekend-cell"><div class="weekend-slot">${we.slot}</div><div class="weekend-menu" onclick="openRecipe('${esc(mainDish)}')">${we.menu}</div></div>`;
   });
   html += `</div></div>`;
 
