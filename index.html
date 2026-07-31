@@ -877,6 +877,39 @@ const recipes = {
       "焼き上がったらすぐに逆さにして完全に冷まし、型から外す",
     ]
   },
+
+  // ===== だし・調味料 =====
+  "簡単3倍濃縮めんつゆ":{
+    category:"だし調味料",
+    note:"出来上がり量 約80cc／砂糖が溶けきらない場合は追加で10秒ずつ加熱してください",
+    ingredients:[
+      {name:"かつお節",qty:"2g"},
+      {name:"しょうゆ",qty:"大さじ2"},
+      {name:"酒",qty:"大さじ2"},
+      {name:"みりん",qty:"大さじ2"},
+      {name:"砂糖",qty:"小さじ1"},
+    ],
+    steps:[
+      "耐熱容器にしょうゆ・酒・みりん・砂糖を入れて混ぜる",
+      "かつお節を加え、600Wのレンジで50秒〜1分加熱する",
+      "砂糖が溶けるまで混ぜ、ざるでこして冷ます",
+    ]
+  },
+  "冷蔵庫で一晩おくだけ簡単水出しだし":{
+    category:"だし調味料",
+    note:"昆布は長時間浸けすぎるとぬめりが出て濁りの原因になるため、浸水時間は12時間以内に／お茶パックや水出し用ポットを使うと素材のカスが出ず後処理が簡単",
+    ingredients:[
+      {name:"水",qty:"1リットル"},
+      {name:"昆布",qty:"10〜20g"},
+      {name:"かつお節",qty:"30g"},
+    ],
+    steps:[
+      "昆布の表面のホコリや汚れを落としておく",
+      "1リットル以上入る容器に、昆布とかつお節を入れる",
+      "水を注いでふたをし、冷蔵庫で一晩（8時間以上）置く",
+      "十分に旨みが出たら、ザルでこす",
+    ]
+  },
 };
 
 // ============================================================
@@ -1115,7 +1148,7 @@ function resetChecks(){
 // ---------- RECIPE TAB ----------
 function renderRecipes(){
   const main = document.getElementById('mainContent');
-  const cats = { メイン:[], 週末:[], スイーツ:[] };
+  const cats = { メイン:[], 週末:[], スイーツ:[], だし調味料:[] };
   Object.entries(recipes).forEach(([name,r])=>{
     if(cats[r.category]) cats[r.category].push(name);
   });
@@ -1123,7 +1156,7 @@ function renderRecipes(){
   let html = `<input class="recipe-search" type="text" placeholder="🔍 レシピを検索..." oninput="filterRecipes(this.value)" id="recipeSearch">`;
   html += `<div id="recipeList">`;
 
-  const catLabels = { メイン:"🍖 メイン料理", 週末:"🏠 週末メニュー", スイーツ:"🍪 スイーツ" };
+  const catLabels = { メイン:"🍖 メイン料理", 週末:"🏠 週末メニュー", スイーツ:"🍪 スイーツ", だし調味料:"🥢 だし・調味料" };
   Object.entries(cats).forEach(([cat,names])=>{
     if(names.length===0) return;
     html += `<div class="recipe-section"><div class="recipe-section-title">${catLabels[cat]||cat}</div>`;
