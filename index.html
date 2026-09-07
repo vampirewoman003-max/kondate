@@ -132,6 +132,10 @@ main{flex:1;overflow-y:auto;padding:10px;}
 .quote-list{display:flex;flex-direction:column;gap:7px;}
 .quote-item{background:#fff;border:1px solid #eee;border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.6;color:#555;}
 .quote-item.is-today{border-color:#f3c9a8;background:#fdf6ee;color:#333;}
+.goal-photos-label{font-size:11px;color:#999;margin-top:14px;margin-bottom:6px;}
+.goal-photos{display:flex;gap:8px;}
+.goal-photos img{flex:1;min-width:0;height:130px;object-fit:cover;border-radius:8px;border:1px solid #eee;}
+
 
 
 
@@ -1005,12 +1009,17 @@ function dayOfYear(d){
   return Math.floor((d - start) / 86400000);
 }
 
+const GOAL_IMAGES = ["img/goal1.jpg","img/goal2.jpg","img/goal3.jpg"];
+
 function renderQuotes(){
   const main = document.getElementById('mainContent');
   const todayIdx = dayOfYear(new Date()) % QUOTES.length;
+  const goalPhotos = GOAL_IMAGES.map(src=>`<img src="${src}" alt="憧れ" loading="lazy">`).join('');
   let html = `<div class="quote-today-card">
     <div class="quote-today-label">💬 今日の格言</div>
     <div class="quote-today-text">「${QUOTES[todayIdx]}」</div>
+    <div class="goal-photos-label">✨ 憧れ</div>
+    <div class="goal-photos">${goalPhotos}</div>
   </div>`;
   html += `<div class="quote-list-title">格言集</div>`;
   html += `<div class="quote-list">`;
