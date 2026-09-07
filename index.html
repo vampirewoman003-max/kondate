@@ -238,6 +238,7 @@ const menuData = {
       { day:"火", main:"ピーマン肉詰め" },
       { day:"水", main:"肉じゃが" },
       { day:"木", main:"トンカツ" },
+      { day:"金", main:"焼きそば" },
     ],
     weekend: WEEKEND_WEEK3
   }
@@ -266,14 +267,15 @@ const weekMeat = {
     {name:"合いびき肉",qty:"300g",note:"ピーマン肉詰め"},
     {name:"豚こま切れ",qty:"300g",note:"肉じゃが"},
     {name:"豚ロース厚切り",qty:"3〜4枚",note:"トンカツ"},
+    {name:"豚肉",qty:"200g",note:"焼きそば"},
   ]
 };
 
 // 平日メイン用の「肉以外」（週ごと）
 const weekExtra = {
   1:{ yasai:["バナナ",{name:"ニラ",qty:"1/2束",note:"餃子"}], sonota:[{name:"餃子の皮",qty:"1袋(約25枚)",note:"餃子(手作り)"},{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}] },
-  2:{ yasai:["バナナ"], sonota:["回鍋肉の素","麻婆豆腐の素"], nichihai:[{name:"豆腐",note:"麻婆豆腐",first:true}] },
-  3:{ yasai:["バナナ",{name:"じゃがいも",qty:"4個",note:"肉じゃが"},{name:"にんじん",qty:"1本",note:"肉じゃが"}], sonota:[{name:"パン粉",qty:"1袋",note:"ピーマン肉詰め・トンカツ"}], nichihai:[{name:"豆腐",note:"キムチ鍋"}], removeCommon:["あずき"] }
+  2:{ yasai:["バナナ"], sonota:["回鍋肉の素","麻婆豆腐の素","カレールー"], nichihai:[{name:"豆腐",note:"麻婆豆腐",first:true}] },
+  3:{ yasai:["バナナ",{name:"じゃがいも",qty:"4個",note:"肉じゃが"},{name:"にんじん",qty:"1本",note:"肉じゃが"},{name:"野菜炒めパック",qty:"1袋",note:"焼きそば"}], sonota:[{name:"パン粉",qty:"1袋",note:"ピーマン肉詰め・トンカツ"},{name:"焼きそば麺",qty:"3個入り+バラ1",note:"焼きそば"}], nichihai:[{name:"豆腐",note:"キムチ鍋"}], removeCommon:["あずき"] }
 };
 
 // 週末メニュー用（週ごと）
@@ -619,6 +621,20 @@ const recipes = {
   },
 
   // ===== 週末 =====
+  "焼きそば":{
+    category:"メイン", weeks:"3週（金）",
+    ingredients:[
+      {name:"焼きそば麺",qty:"3個入り+バラ1"},
+      {name:"豚肉",qty:"200g"},
+      {name:"野菜炒めパック",qty:"1袋"},
+    ],
+    steps:[
+      "豚肉を一口大に切る",
+      "フライパンに油をひき、豚肉を炒める",
+      "野菜炒めパックを加えてさっと炒める",
+      "麺をほぐしながら加え、付属のソースを絡めて炒め合わせる",
+    ]
+  },
   "パスタ":{
     category:"週末", weeks:"毎週（土昼）", note:"お好みのソースで",
     ingredients:[
