@@ -273,8 +273,8 @@ const weekMeat = {
 
 // 平日メイン用の「肉以外」（週ごと）
 const weekExtra = {
-  1:{ yasai:["バナナ",{name:"ニラ",qty:"1/2束",note:"餃子"}], sonota:[{name:"餃子の皮",qty:"1袋(約25枚)",note:"餃子(手作り)"},{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}] },
-  2:{ yasai:["バナナ"], sonota:["回鍋肉の素","麻婆豆腐の素","カレールー"], nichihai:[{name:"豆腐",note:"麻婆豆腐",first:true}] },
+  1:{ yasai:["バナナ",{name:"ニラ",qty:"1/2束",note:"餃子"}], sonota:[{name:"餃子の皮",qty:"1袋(約25枚)",note:"餃子(手作り)"},{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}], removeCommon:["あずき"] },
+  2:{ yasai:["バナナ"], sonota:["回鍋肉の素","麻婆豆腐の素","カレールー"], nichihai:[{name:"豆腐",note:"麻婆豆腐",first:true}], removeCommon:["あずき"] },
   3:{ yasai:["バナナ",{name:"じゃがいも",qty:"4個",note:"肉じゃが"},{name:"にんじん",qty:"1本",note:"肉じゃが"},{name:"野菜炒めパック",qty:"1袋",note:"焼きそば"}], sonota:[{name:"パン粉",qty:"1袋",note:"ピーマン肉詰め・トンカツ"},{name:"焼きそば麺",qty:"3個入り+バラ1",note:"焼きそば"}], nichihai:[{name:"豆腐",note:"キムチ鍋"}], removeCommon:["あずき"] }
 };
 
@@ -310,7 +310,6 @@ const weekendShop = {
     sonota:[
       {name:"カットトマト缶",qty:"400g",note:"ミネストローネ"},
       {name:"コンソメ（顆粒）",qty:"小さじ2",note:"ミネストローネ"},
-      {name:"粉チーズ",qty:"少々",note:"ミネストローネ"},
     ]
   },
   3:{
