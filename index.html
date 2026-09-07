@@ -271,9 +271,9 @@ const weekMeat = {
 
 // 平日メイン用の「肉以外」（週ごと）
 const weekExtra = {
-  1:{ yasai:[{name:"ニラ",qty:"1/2束",note:"餃子"}], sonota:[{name:"餃子の皮",qty:"1袋(約25枚)",note:"餃子(手作り)"},{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}] },
-  2:{ yasai:[], sonota:[], nichihai:[{name:"豆腐",note:"麻婆豆腐"}] },
-  3:{ yasai:[{name:"じゃがいも",qty:"4個",note:"肉じゃが"},{name:"にんじん",qty:"1本",note:"肉じゃが"}], sonota:[{name:"パン粉",qty:"1袋",note:"ピーマン肉詰め・トンカツ"}], nichihai:[{name:"豆腐",note:"キムチ鍋"}] }
+  1:{ yasai:["バナナ",{name:"ニラ",qty:"1/2束",note:"餃子"}], sonota:[{name:"餃子の皮",qty:"1袋(約25枚)",note:"餃子(手作り)"},{name:"トマト缶",qty:"1缶",note:"鶏肉のトマト煮"}] },
+  2:{ yasai:["バナナ"], sonota:["回鍋肉の素","麻婆豆腐の素"], nichihai:[{name:"豆腐",note:"麻婆豆腐",first:true}] },
+  3:{ yasai:["バナナ",{name:"じゃがいも",qty:"4個",note:"肉じゃが"},{name:"にんじん",qty:"1本",note:"肉じゃが"}], sonota:[{name:"パン粉",qty:"1袋",note:"ピーマン肉詰め・トンカツ"}], nichihai:[{name:"豆腐",note:"キムチ鍋"}], removeCommon:["あずき"] }
 };
 
 // 週末メニュー用（週ごと）
@@ -333,7 +333,7 @@ const teiban = {
     "きのこ","ブロッコリー","ほうれん草","レタス（葉物全般）","サツマイモ",
     "ネギ類","タマネギ","レモン","ナス・ピーマン・パプリカ","カボチャ",
     "トマト","アボカド","キャベツ","ラディッシュ","かぶ","大根",
-    "しょうが","ニンニク","ベリー類","バナナ"
+    "しょうが","ニンニク","ベリー類"
   ],
   nichihai:[ "キムチ","チーズ","食パン","卵","牛乳","納豆","豆腐","生クリーム" ],
   sonota:[ "魚","あずき" ]
@@ -1293,14 +1293,16 @@ function renderMenu(){
 // ---------- SHOPPING TAB ----------
 function mergeNichihai(weekNichihai, teibanNichihai){
   const extra = weekNichihai || [];
-  const result = teibanNichihai.map(item=>{
+  let result = teibanNichihai.map(item=>{
     const override = extra.find(w=>w.name===item);
     return override || item;
   });
   extra.forEach(w=>{
     if(!teibanNichihai.includes(w.name)) result.push(w);
   });
-  return result;
+  const firstItems = result.filter(it=>it && typeof it==='object' && it.first);
+  const restItems = result.filter(it=>!(it && typeof it==='object' && it.first));
+  return [...firstItems, ...restItems];
 }
 
 function renderShopping(){
@@ -1314,7 +1316,7 @@ function renderShopping(){
   const niku    = [ ...(weekMeat[currentWeek]||[]), ...ws.niku ];
   const yasai   = [ ...wx.yasai, ...ws.yasai, ...teiban.yasai ];
   const nichihai= mergeNichihai(wx.nichihai, teiban.nichihai);
-  const sonota  = [ ...wx.sonota, ...ws.sonota, ...teiban.sonota ];
+  const sonota  = [ ...wx.sonota, ...ws.sonota, ...teiban.sonota.filter(x=>!(wx.removeCommon||[]).includes(x)) ];
 
   html += shopSection('🥩 肉', niku, 'niku');
   html += shopSection('🥦 野菜・果物', yasai, 'yasai');
