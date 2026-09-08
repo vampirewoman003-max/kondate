@@ -125,6 +125,10 @@ main{flex:1;overflow-y:auto;padding:10px;}
 .rec-table input.rec-w{width:66px;text-align:center;}
 .rec-table input.rec-m{width:100%;}
 .rec-table td:nth-child(2){width:74px;}
+.rec-memo-cell{display:flex;align-items:center;gap:5px;}
+.rec-plan{flex:0 0 auto;font-size:11px;font-weight:bold;color:#e8703a;background:#fdf6ee;border:1px solid #f3d9c4;border-radius:6px;padding:3px 5px;white-space:nowrap;}
+.rec-plan.ok{color:#3f8f5a;background:#eef7f0;border-color:#cbe5d3;}
+.rec-plan.over{color:#c0562c;background:#fdeee7;border-color:#f2c9b4;}
 .rec-chart-card{background:#fff;border:1px solid #eee;border-radius:12px;padding:14px 12px 10px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
 .rec-chart-title{font-size:14px;font-weight:bold;color:#333;margin-bottom:2px;}
 .rec-chart-sub{font-size:11px;color:#999;margin-bottom:10px;}
@@ -1070,6 +1074,19 @@ function dayOffset(date){
   return Math.round((date - WEIGHT_PLAN_START) / 86400000);
 }
 
+// その日の予定体重（マイルストーン間を日割りで直線補間）。スタート前はnull。
+function planWeight(date){
+  const off = dayOffset(date);
+  if(off < 0) return null;
+  const ms = WEIGHT_PLAN_MILESTONES;
+  const last = ms.length - 1;
+  const endOff = WEIGHT_PLAN_STEP_DAYS * last;
+  if(off >= endOff) return ms[last];
+  const i = Math.floor(off / WEIGHT_PLAN_STEP_DAYS);
+  const frac = (off - i*WEIGHT_PLAN_STEP_DAYS) / WEIGHT_PLAN_STEP_DAYS;
+  return Math.round((ms[i] + (ms[i+1]-ms[i]) * frac) * 10) / 10;
+}
+
 function collectActualWeights(){
   const points = [];
   const endOffset = WEIGHT_PLAN_STEP_DAYS * (WEIGHT_PLAN_MILESTONES.length - 1);
@@ -1213,15 +1230,23 @@ function renderRecord(){
     <span class="rec-month">${y}年${m}月</span>
     <button class="rec-nav" onclick="changeMonth(1)">翌月 ▶</button>
   </div>`;
-  html += `<table class="rec-table"><thead><tr><th>日</th><th>体重(kg)</th><th>一言メモ</th></tr></thead><tbody>`;
+  html += `<table class="rec-table"><thead><tr><th>日</th><th>体重(kg)</th><th>予定 / 一言メモ</th></tr></thead><tbody>`;
   for(let d=1; d<=days; d++){
     const rec = data[d] || {};
     const w = (rec.w||'').replace(/"/g,'&quot;');
     const memo = (rec.m||'').replace(/"/g,'&quot;');
+    const plan = planWeight(new Date(y, m-1, d));
+    let planTag = '';
+    if(plan !== null){
+      const actual = parseFloat(rec.w);
+      let cls = '';
+      if(!isNaN(actual)) cls = actual <= plan ? ' ok' : ' over';
+      planTag = `<span class="rec-plan${cls}">${plan.toFixed(1)}</span>`;
+    }
     html += `<tr>
       <td class="rec-day">${d}</td>
       <td><input class="rec-w" type="text" inputmode="decimal" value="${w}" onchange="saveRecord(${d},'w',this.value)"></td>
-      <td><input class="rec-m" type="text" value="${memo}" placeholder="一言メモ" onchange="saveRecord(${d},'m',this.value)"></td>
+      <td><div class="rec-memo-cell">${planTag}<input class="rec-m" type="text" value="${memo}" placeholder="一言メモ" onchange="saveRecord(${d},'m',this.value)"></div></td>
     </tr>`;
   }
   html += `</tbody></table>`;
@@ -1245,7 +1270,7 @@ function saveRecord(day, field, val){
   if(!data[day]) data[day] = {};
   data[day][field] = val;
   localStorage.setItem(key, JSON.stringify(data));
-  if(field === 'w') renderWeightChart();
+  if(field === 'w') renderRecord(); // 予定体重チップの色も更新（グラフ再描画込み）
 }
 
 // ---------- SCHEDULE TAB ----------
