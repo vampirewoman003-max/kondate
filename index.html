@@ -111,6 +111,16 @@ main{flex:1;overflow-y:auto;padding:10px;}
 .sched-body{flex:1;}
 .sched-title{font-size:15px;}
 .sched-note{font-size:12px;color:#795548;background:#fff8e1;border-radius:6px;padding:2px 8px;margin-top:5px;display:inline-block;}
+.reward-head{font-size:15px;font-weight:bold;color:#c2185b;background:#fce4ec;border-radius:10px;padding:10px 14px;margin:20px 0 12px;}
+.reward-item{display:flex;align-items:center;background:#fff;border:1px solid #f8bbd0;border-radius:10px;margin-bottom:8px;padding:10px 12px;}
+.reward-kg{flex-shrink:0;width:58px;font-size:15px;font-weight:bold;color:#c2185b;}
+.reward-icon{font-size:22px;margin:0 10px;flex-shrink:0;}
+.reward-text{flex:1;font-size:15px;}
+.reward-goal{background:#fff0f5;border:2px solid #ec407a;}
+.reward-check{font-size:18px;margin-right:8px;flex-shrink:0;}
+.reward-done{background:#f1f8e9;border-color:#aed581;}
+.reward-done .reward-text{color:#558b2f;font-weight:bold;}
+.reward-best{font-size:12px;color:#795548;background:#fff8e1;border-radius:6px;padding:6px 10px;margin-bottom:10px;}
 
 /* Words（お客さまへのひとこと） */
 .words-head{font-size:19px;font-weight:bold;line-height:1.45;text-align:center;color:#C2255C;background:#FFF0F4;border-radius:14px;padding:14px 12px;margin-bottom:12px;}
@@ -1298,15 +1308,43 @@ const SCHEDULE = [
   { time:"起床後", icon:"🍋", title:"レモン水を飲む" },
   { time:"朝", icon:"☕", title:"ラテ" },
   { time:"午前", icon:"🥤", title:"酵素ソーダ・バナナ・ヨーグルト・ゆで卵", note:"出かける日は午前と午後のメニューを入れ替え", noteIcon:"🔄" },
+  { time:"午後", icon:"🍚", title:"豆腐・納豆2パック・ご飯" },
   { time:"昼", icon:"☕", title:"ラテ" },
-  { time:"午後", icon:"🍚", title:"豆腐・納豆・ご飯" },
   { time:"午後〜", icon:"👓", title:"ブルーライト眼鏡を着用" },
+  { time:"夕方", icon:"☕", title:"ラテ" },
   { time:"夜", icon:"🍲", title:"味噌汁・豆腐・納豆・ゆで卵", note:"19時には食べ終える" },
-  { time:"夜", icon:"☕", title:"ラテ" },
   { time:"夜", icon:"🏃", title:"踏み台昇降" },
   { time:"夜", icon:"🧘", title:"ストレッチ" },
   { time:"22時", icon:"🛌", title:"就寝" },
 ];
+
+const REWARDS = [
+  { kg:55, icon:"💇", text:"ヘアカラー" },
+  { kg:54, icon:"🧴", text:"HIMAWARIシャンプー購入" },
+  { kg:53, icon:"✨", text:"素肌記念日購入" },
+  { kg:52, icon:"💉", text:"ボトックス" },
+  { kg:51, icon:"👁", text:"カラコン＋カラコン目薬購入" },
+  { kg:50, icon:"🎨", text:"アイシャドウ・ブラシ購入（ドンキ）" },
+  { kg:49, icon:"✂️", text:"美容室" },
+  { kg:48, icon:"👗", text:"洋服購入 🎉", goal:true },
+];
+
+// 記録タブに入れた体重のうち、いちばん低い値（＝これまでに到達した体重）
+function bestWeight(){
+  let best = null;
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(!k || !k.startsWith('record_')) continue;
+      const data = JSON.parse(localStorage.getItem(k) || '{}');
+      Object.values(data).forEach(rec=>{
+        const w = parseFloat(String((rec && rec.w) || '').replace(/[０-９．]/g, c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)));
+        if(w >= 20 && w <= 200 && (best === null || w < best)) best = w;
+      });
+    }
+  }catch(e){}
+  return best;
+}
 
 function renderSchedule(){
   const main = document.getElementById('mainContent');
@@ -1319,6 +1357,18 @@ function renderSchedule(){
         <div class="sched-title">${s.title}</div>
         ${s.note?`<div class="sched-note">${s.noteIcon||'⏰'} ${s.note}</div>`:''}
       </div>
+    </div>`;
+  });
+  const best = bestWeight();
+  html += `<div class="reward-head">🎯 目標 48kg ／ ご褒美リスト</div>`;
+  html += `<div class="reward-best">${best ? '📉 これまでの最低体重：'+best+'kg（記録タブより）' : '記録タブに体重を入れると、達成したご褒美に✅がつきます'}</div>`;
+  REWARDS.forEach(r=>{
+    const done = best && best <= r.kg;
+    html += `<div class="reward-item${r.goal?' reward-goal':''}${done?' reward-done':''}">
+      <div class="reward-check">${done?'✅':'⬜'}</div>
+      <div class="reward-kg">${r.kg}kg</div>
+      <div class="reward-icon">${r.icon}</div>
+      <div class="reward-text">${r.text}</div>
     </div>`;
   });
   main.innerHTML = html;
