@@ -1296,12 +1296,15 @@ function saveRecord(day, field, val){
 // ---------- SCHEDULE TAB ----------
 const SCHEDULE = [
   { time:"起床後", icon:"🍋", title:"レモン水を飲む" },
-  { time:"午前", icon:"🥤", title:"酵素ソーダ" },
-  { time:"午前", icon:"💪", title:"筋トレ" },
-  { time:"午前", icon:"🧘", title:"ストレッチ" },
-  { time:"昼食", icon:"🍚", title:"豆腐・納豆・ご飯・味噌汁" },
-  { time:"夕飯", icon:"🐟", title:"魚・野菜・味噌汁", note:"19時には食べ終える" },
-  { time:"19時〜", icon:"👓", title:"ブルーライト眼鏡を着用" },
+  { time:"朝", icon:"☕", title:"ラテ" },
+  { time:"午前", icon:"🥤", title:"酵素ソーダ・バナナ・ヨーグルト・ゆで卵", note:"出かける日は午前と午後のメニューを入れ替え", noteIcon:"🔄" },
+  { time:"昼", icon:"☕", title:"ラテ" },
+  { time:"午後", icon:"🍚", title:"豆腐・納豆・ご飯" },
+  { time:"午後〜", icon:"👓", title:"ブルーライト眼鏡を着用" },
+  { time:"夜", icon:"🍲", title:"味噌汁・豆腐・納豆・ゆで卵", note:"19時には食べ終える" },
+  { time:"夜", icon:"☕", title:"ラテ" },
+  { time:"夜", icon:"🏃", title:"踏み台昇降" },
+  { time:"夜", icon:"🧘", title:"ストレッチ" },
   { time:"22時", icon:"🛌", title:"就寝" },
 ];
 
@@ -1314,7 +1317,7 @@ function renderSchedule(){
       <div class="sched-icon">${s.icon}</div>
       <div class="sched-body">
         <div class="sched-title">${s.title}</div>
-        ${s.note?`<div class="sched-note">⏰ ${s.note}</div>`:''}
+        ${s.note?`<div class="sched-note">${s.noteIcon||'⏰'} ${s.note}</div>`:''}
       </div>
     </div>`;
   });
